@@ -816,6 +816,11 @@ if(MINGW)
   install(PROGRAMS ${BASH_EXE} DESTINATION ${CMAKE_INSTALL_PREFIX}/mingw/usr/bin)
 endif()
 
+# set up libdir
+if(NOT DEFINED LIB_INSTALL_DIR)
+    set(LIB_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib)
+endif()
+
 # =============================================================================
 # Installation steps for backward compatibility
 # =============================================================================
