@@ -766,30 +766,11 @@ endif()
 # Add tests if enabled
 # =============================================================================
 if(NRN_ENABLE_TESTS)
-  # If CoreNEURON + NMODL are enabled, Catch2 will already have been set up...
-  if(NOT TARGET Catch2::Catch2)
-    nrn_add_external_project(catch2)
-    set(CATCH_DIR ${PROJECT_SOURCE_DIR}/external/catch2)
-    list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/external/catch2/contrib)
-    include(Catch)
-  endif()
-  include(CTest)
-  nrn_find_python_module(pytest)
-  nrn_find_python_module(pytest_cov)
-  if(NRN_ENABLE_PYTHON)
-    if(NOT PYTEST_FOUND)
-      message(SEND_ERROR "pytest Python package is required.")
-    elseif(NOT PYTEST_COV_FOUND)
-      message(WARNING "pytest-cov package not installed. Python coverage will not be generated.")
-    endif()
-  else() # share/demo still required for testing
-    add_custom_target(
-      copy_demo_to_build
-      COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/share/demo
-              ${NRN_BUILD_SHARE_DIR}/demo
-      COMMENT "Copying ${PROJECT_SOURCE_DIR}/share/demo to ${NRN_BUILD_SHARE_DIR}"
-      VERBATIM)
-    add_dependencies(nrniv_lib copy_demo_to_build)
+    include(CTest)
+    find_package(Catch2 REQUIRED)
+    find_python_module(pytest)
+  if(NRN_ENABLE_PYTHON AND NOT PYTEST_FOUND)
+    message(SEND_ERROR "pytest Python package is required.")
   endif()
   # Initialize the submodule *before* including the test/CMakeLists.txt that uses it. This ensures
   # that the test infrastructure can find the names of the input data files and set up rules to copy
