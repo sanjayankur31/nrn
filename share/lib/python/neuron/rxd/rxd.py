@@ -500,10 +500,13 @@ def _find_librxdmath():
     base_path = os.path.join(h.neuronhome(), "..", "..", platform.machine())
     if not os.path.exists(base_path):
         base_path = os.path.join(h.neuronhome(), "..", "..")
-    base_path = os.path.join(base_path, "lib", "librxdmath")
-    success = False
-    for extension in ["", ".dll", ".so", ".dylib"]:
-        dll = base_path + extension
+    if platform.architecture()[0] == "64bit":
+        base_path = os.path.join(base_path, "lib64", "librxdmath")
+    else:
+        base_path = os.path.join(base_path, "lib", "librxdmath")
+    success = False 
+    for extension in ['', '.dll', '.so', '.dylib']:
+        dll = base_path  + extension
         try:
             success = os.path.exists(dll)
         except:
