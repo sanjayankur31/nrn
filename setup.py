@@ -320,8 +320,6 @@ def setup_package():
             "src/nrnmpi",
         ],
         extra_link_args=[
-            # use relative rpath to .data/lib
-            "-Wl,-rpath,{}".format(REL_RPATH + "/.data/lib/")
         ],
         **extension_common_params
     )]
@@ -340,10 +338,8 @@ def setup_package():
         rxd_params = extension_common_params.copy()
         rxd_params['libraries'].append("rxdmath")
         rxd_params.update(dict(
-            # Cython files take a long time to compile with O2 but this
-            # is a distribution...
-            extra_compile_args=extra_compile_args,
-            extra_link_args=["-Wl,-rpath,{}".format(REL_RPATH + "/../../.data/lib/")]
+            extra_compile_args=[],  # cython files take too long to compile with O3
+            extra_link_args=[]
         ))
 
         log.info("RX3D compile flags %s" % str(rxd_params))

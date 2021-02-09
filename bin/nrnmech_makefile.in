@@ -91,4 +91,4 @@ libnrnmech_la_OBJECTS = $(MODOBJFILES) mod_func.lo $(COBJFILES)
 libnrnmech_la_LIBADD = $(NRNOCLIBS) $(NRNIVLIBS)
 
 libnrnmech.la: $(libnrnmech_la_OBJECTS) $(libnrnmech_la_DEPENDENCIES)
-	$(LINK) -rpath "$(libdir)" $(libnrnmech_la_LDFLAGS) $(libnrnmech_la_OBJECTS) $(libnrnmech_la_LIBADD) $(LIBS)
+	$(LINK) $(libnrnmech_la_LDFLAGS) $(libnrnmech_la_OBJECTS) $(libnrnmech_la_LIBADD) $(LIBS)
