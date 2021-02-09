@@ -122,10 +122,7 @@ libdirs = [destdir + get_escaped_path("@NRN_LIBDIR@"),
 
 # prepare rpath flags for neuron and iv libs directories
 rpath_prefix_flag='-Wl,-R'
-extra_link_args = [@NRN_LINK_FLAGS_COMMA_SEPARATED_STRINGS@]
-@MAC_DARWIN_FALSE@extra_link_args += [rpath_prefix_flag+lib_path for lib_path in libdirs]
-@MAC_DARWIN_TRUE@extra_link_args.append("-Wl,-rpath,@loader_path/../../")
-@MAC_DARWIN_TRUE@extra_link_args.append("-Wl,-rpath,%s" % ivlibdir)
+extra_rpath_flags = []
 
 # as neuron module will be built during make, add build/lib
 # directory for linking. Note that build/lib shouldn't be
@@ -144,6 +141,7 @@ if "@IVHINES@" != "":
     libs.append("@IVHINES@")
 
 extra_compile_args = [@NRN_COMPILE_FLAGS_COMMA_SEPARATED_STRINGS@]
+extra_link_args = []
 
 if using_pgi:
   extra_link_args.append(pgi_compiler_flags)

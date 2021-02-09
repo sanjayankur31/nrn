@@ -344,48 +344,32 @@ def setup_package():
         libraries=["nrniv", "nrnpython{}".format(sys.version_info[0])],
     )
 
-    extensions = [
-        CMakeAugmentedExtension(
-            "neuron.hoc",
-            ["src/nrnpython/inithoc.cpp"],
-            cmake_collect_dirs=NRN_COLLECT_DIRS,
-            cmake_flags=[
-                "-DNRN_ENABLE_CORENEURON=" + ("ON" if Components.CORENRN else "OFF"),
-                "-DNRN_ENABLE_INTERVIEWS=" + ("ON" if Components.IV else "OFF"),
-                "-DIV_ENABLE_X11_DYNAMIC=" + ("ON" if Components.IV else "OFF"),
-                "-DNRN_ENABLE_RX3D=OFF",  # Never build within CMake
-                "-DNRN_ENABLE_MPI=" + ("ON" if Components.MPI else "OFF"),
-                "-DNRN_ENABLE_MPI_DYNAMIC=" + ("ON" if Components.MPI else "OFF"),
-                "-DNRN_ENABLE_PYTHON_DYNAMIC=ON",
-                "-DNRN_ENABLE_MODULE_INSTALL=OFF",
-                "-DNRN_ENABLE_REL_RPATH=ON",
-                "-DLINK_AGAINST_PYTHON=OFF",
-                "-DCMAKE_VERBOSE_MAKEFILE=OFF",
-                "-DCORENRN_ENABLE_OPENMP=ON",  # TODO: manylinux portability questions
-            ]
-            + (
-                [
-                    "-DCORENRN_ENABLE_GPU=ON",
-                    "-DCMAKE_C_COMPILER=nvc",  # use nvc and nvc++ for GPU support
-                    "-DCMAKE_CXX_COMPILER=nvc++",
-                    "-DCMAKE_CUDA_COMPILER=nvcc",
-                ]
-                if Components.GPU
-                else []
-            ),
-            include_dirs=[
-                "src",
-                "src/oc",
-                "src/nrnpython",
-                "src/nrnmpi",
-            ],
-            extra_link_args=[
-                # use relative rpath to .data/lib
-                "-Wl,-rpath,{}".format(REL_RPATH + "/.data/lib/")
-            ],
-            **extension_common_params,
-        )
-    ]
+    extensions = [CMakeAugmentedExtension(
+        "neuron.hoc",
+        ["src/nrnpython/inithoc.cpp"],
+        cmake_collect_dirs=NRN_COLLECT_DIRS,
+        cmake_flags=[
+            '-DNRN_ENABLE_CORENEURON=OFF',
+            '-DNRN_ENABLE_INTERVIEWS=' + ("ON" if Components.IV else "OFF"),
+            '-DIV_ENABLE_X11_DYNAMIC=' + ("ON" if Components.IV else "OFF"),
+            '-DNRN_ENABLE_RX3D=OFF',  # Never build within CMake
+            '-DNRN_ENABLE_MPI='         + ("ON" if Components.MPI else "OFF"),
+            '-DNRN_ENABLE_MPI_DYNAMIC=' + ("ON" if Components.MPI else "OFF"),
+            '-DNRN_ENABLE_PYTHON_DYNAMIC=ON',
+            '-DNRN_ENABLE_MODULE_INSTALL=OFF',
+            '-DNRN_ENABLE_REL_RPATH=ON',
+            '-DLINK_AGAINST_PYTHON=OFF',
+        ],
+        include_dirs=[
+            "src",
+            "src/oc",
+            "src/nrnpython",
+            "src/nrnmpi",
+        ],
+        extra_link_args=[
+        ],
+        **extension_common_params
+    )]
 
     if Components.RX3D:
         include_dirs = ["share/lib/python/neuron/rxd/geometry3d", numpy.get_include()]
@@ -394,17 +378,11 @@ def setup_package():
         # But pay the price if uploading distribution
         extra_compile_args = ["-O2" if "NRN_BUILD_FOR_UPLOAD" in os.environ else "-O0"]
         rxd_params = extension_common_params.copy()
-        rxd_params["libraries"].append("rxdmath")
-        rxd_params.update(
-            dict(
-                # Cython files take a long time to compile with O2 but this
-                # is a distribution...
-                extra_compile_args=extra_compile_args,
-                extra_link_args=[
-                    "-Wl,-rpath,{}".format(REL_RPATH + "/../../.data/lib/")
-                ],
-            )
-        )
+        rxd_params['libraries'].append("rxdmath")
+        rxd_params.update(dict(
+            extra_compile_args=[],  # cython files take too long to compile with O3
+            extra_link_args=[]
+        ))
 
         log.info("RX3D compile flags %s" % str(rxd_params))
 
