@@ -776,7 +776,6 @@ if(NRN_ENABLE_TESTS)
   # them into the test working directories.
   set(backup "${${CODING_CONV_PREFIX}_3RDPARTY_DIR}")
   set(${CODING_CONV_PREFIX}_3RDPARTY_DIR "test")
-  cpp_cc_git_submodule(rxd/testdata)
   set(${CODING_CONV_PREFIX}_3RDPARTY_DIR "${backup}")
   add_subdirectory(test)
 endif()
