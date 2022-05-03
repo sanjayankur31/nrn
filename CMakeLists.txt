@@ -536,7 +536,7 @@ if(NRN_ENABLE_PYTHON)
                 ${PROJECT_SOURCE_DIR}/share/lib/python/neuron/help_data.dat
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${PROJECT_SOURCE_DIR}/share/lib/python/neuron/help_data.dat
-                ${PROJECT_BINARY_DIR}/lib/python/neuron/help_data.dat
+                ${PROJECT_SOURCE_DIR}/nrnpython/help_data.dat
         COMMENT "Generating help_data.dat"
         VERBATIM)
     add_dependencies(nrniv_lib help_data_dat)
