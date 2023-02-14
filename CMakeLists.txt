@@ -241,7 +241,6 @@ if(NOT EXISTS "${CODING_CONV_CMAKE}/3rdparty.cmake")
   nrn_initialize_submodule(external/coding-conventions)
 endif()
 include("${CODING_CONV_CMAKE}/3rdparty.cmake")
-cpp_cc_git_submodule(Random123)
 
 # =============================================================================
 # Enable sanitizer support if the NRN_SANITIZERS variable is set
