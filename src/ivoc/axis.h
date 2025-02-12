@@ -1,6 +1,7 @@
 #ifndef axis_h
 #define axis_h
 
+#include <iostream>
 #include <InterViews/observe.h>
 #include <InterViews/glyph.h>
 
@@ -20,7 +21,7 @@ class Axis: public Glyph, public Observer {
          int invert = 0,
          bool number = true);
     virtual ~Axis();
-    virtual void save(ostream&);
+    virtual void save(std::ostream&);
     virtual void update(Observable*);
     virtual void size(float&, float&);
 

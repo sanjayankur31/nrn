@@ -442,7 +442,7 @@ void XYView::zin(Coord& x1, Coord& y1, Coord& x2, Coord& y2) const {
     y2 -= dy;
 }
 
-void XYView::save(ostream& o) {
+void XYView::save(std::ostream& o) {
     PrintableWindow* w;
     if (!canvas_) {
         if (!parent() || !parent()->has_window()) {
@@ -465,7 +465,7 @@ void XYView::save(ostream& o) {
             w->save_bottom(),
             xsize_,
             ysize_);
-    o << buf << endl;
+    o << buf << std::endl;
 }
 
 void XYView::scene2view(const Allocation& a) const {
@@ -746,7 +746,7 @@ OcViewGlyph::~OcViewGlyph() {
     Resource::unref(g_);
 }
 
-void OcViewGlyph::save(ostream& o) {
+void OcViewGlyph::save(std::ostream& o) {
     Scene* s = v_->scene();
     char buf[256];
     long i = Scene::scene_list_index(s);
@@ -756,7 +756,7 @@ void OcViewGlyph::save(ostream& o) {
     } else {
         sprintf(buf, "save_window_ = scene_vector_[%ld]", i);
     }
-    o << buf << endl;
+    o << buf << std::endl;
     v_->save(o);
     if (!s->mark()) {
         s->save_phase2(o);
