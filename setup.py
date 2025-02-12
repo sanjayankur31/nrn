@@ -484,12 +484,7 @@ def setup_package():
                 "src/nrnmpi",
             ],
             extra_compile_args=extra_compile_args + ["-std=c++17"],
-            extra_link_args=extra_link_args
-            + [
-                "-Wl,-rpath,{}{}".format(
-                    REL_RPATH, "/../../" if just_extensions else "/.data/lib/"
-                )
-            ],
+            extra_link_args=extra_link_args,
             **extension_common_params,
         )
     ]
@@ -515,10 +510,8 @@ def setup_package():
             dict(
                 # Cython files take a long time to compile with O2 but this
                 # is a distribution...
-                extra_compile_args=extra_compile_args
-                + ["-O2" if "NRN_BUILD_FOR_UPLOAD" in os.environ else rx3d_opt_level],
-                extra_link_args=extra_link_args
-                + ["-Wl,-rpath,{}".format(REL_RPATH + "/../../.data/lib/")],
+                extra_compile_args=extra_compile_args,
+                extra_link_args=extra_link_args,
             )
         )
 

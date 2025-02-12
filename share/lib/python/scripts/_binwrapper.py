@@ -11,6 +11,7 @@ from pkg_resources import working_set
 from setuptools.command.build_ext import new_compiler
 from packaging.version import Version
 from sysconfig import get_config_vars, get_config_var
+import platform
 
 
 def _customize_compiler(compiler):
@@ -64,6 +65,7 @@ def _config_exe(exe_name):
     """Sets the environment to run the real executable (returned)"""
 
     package_name = "neuron"
+    arch_name = platform.machine()
 
     # determine package to find the install location
     if "neuron-gpu-nightly" in working_set.by_key:
@@ -90,6 +92,7 @@ def _config_exe(exe_name):
     os.environ["CORENRN_PYTHONEXE"] = sys.executable
     os.environ["CORENRN_PERLEXE"] = shutil.which("perl")
     os.environ["NRNBIN"] = os.path.dirname(__file__)
+    os.environ["LD_LIBRARY_PATH"] = f"{os.environ.get('LD_LIBRARY_PATH', '')}:{arch_name}"
 
     _set_default_compiler()
     return os.path.join(NRN_PREFIX, "bin", exe_name)
@@ -99,8 +102,7 @@ def _wrap_executable(output_name):
     """Create a wrapper for an executable in same dir. Requires renaming the original file.
     Executables are typically found under arch_name
     """
-    release_dir = os.path.join(os.environ["NEURONHOME"], "demo/release")
-    arch_name = next(os.walk(release_dir))[1][0]  # first dir
+    arch_name = platform.machine()
     file_path = os.path.join(arch_name, output_name)
     shutil.move(file_path, file_path + ".nrn")
     shutil.copy(__file__, file_path)
