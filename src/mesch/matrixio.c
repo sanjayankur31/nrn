@@ -44,8 +44,8 @@ static char line[MAXLINE];
   **************************************************************************/
 /* skipjunk -- skips white spaces and strings of the form #....\n
    Here .... is a comment string */
-int     skipjunk(fp)
-FILE    *fp;
+int 
+skipjunk (FILE *fp)
 {
      int        c;
      
@@ -385,8 +385,8 @@ VEC     *vec)
   **************************************************************************/
 static char    *format = "%14.9g ";
 
-char	*setformat(f_string)
-char    *f_string;
+char *
+setformat (char *f_string)
 {
     char	*old_f_string;
     old_f_string = format;

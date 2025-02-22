@@ -41,9 +41,8 @@ static char rcsid[] = "sparseio.c,v 1.1 1997/12/04 17:55:49 hines Exp";
 static char line[MAXLINE];
 
 /* sp_foutput -- output sparse matrix A to file/stream fp */
-void    sp_foutput(fp,A)
-FILE    *fp;
-SPMAT  *A;
+void 
+sp_foutput (FILE *fp, SPMAT *A)
 {
 	int     i, j_idx, m /* , n */;
 	SPROW  *rows;
@@ -124,9 +123,8 @@ SPMAT  *A;
 ******************************************************************/
 
 /* sp_dump -- prints ALL relevant information about the sparse matrix A */
-void    sp_dump(fp,A)
-FILE    *fp;
-SPMAT  *A;
+void 
+sp_dump (FILE *fp, SPMAT *A)
 {
 	int     i, j, j_idx;
 	SPROW  *rows;
@@ -182,8 +180,8 @@ SPMAT  *A;
 /* sp_finput -- input sparse matrix from stream/file fp
 	-- uses friendly input routine if fp is a tty
 	-- uses format identical to output format otherwise */
-SPMAT  *sp_finput(fp)
-FILE    *fp;
+SPMAT *
+sp_finput (FILE *fp)
 {
 	int     i, len, ret_val;
 	int     col, curr_col, m, n, tmp, tty;

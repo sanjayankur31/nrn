@@ -42,9 +42,8 @@ static char	rcsid[] = "sparse.c,v 1.1 1997/12/04 17:55:48 hines Exp";
 
 
 /* sp_get_val -- returns the (i,j) entry of the sparse matrix A */
-double	sp_get_val(A,i,j)
-SPMAT	*A;
-int	i, j;
+double 
+sp_get_val (SPMAT *A, int i, int j)
 {
    SPROW	*r;
    int	idx;
@@ -63,10 +62,8 @@ int	i, j;
 }
 
 /* sp_set_val -- sets the (i,j) entry of the sparse matrix A */
-double	sp_set_val(A,i,j,val)
-SPMAT	*A;
-int	i, j;
-double	val;
+double 
+sp_set_val (SPMAT *A, int i, int j, double val)
 {
    SPROW	*r;
    int	idx, idx2, new_len;
@@ -195,8 +192,8 @@ VEC	*x, *out;
 /* sp_get -- get sparse matrix
    -- len is number of elements available for each row without
    allocating further memory */
-SPMAT	*sp_get(m,n,maxlen)
-int	m, n, maxlen;
+SPMAT *
+sp_get (int m, int n, int maxlen)
 {
    SPMAT	*A;
    SPROW	*rows;
@@ -257,8 +254,8 @@ int	m, n, maxlen;
 
 
 /* sp_free -- frees up the memory for a sparse matrix */
-int	sp_free(A)
-SPMAT	*A;
+int 
+sp_free (SPMAT *A)
 {
    SPROW	*r;
    int	i;
@@ -317,8 +314,8 @@ SPMAT	*A;
    -- note that the max_len fields (etc) are no larger in the copy
    than necessary
    -- result is returned */
-SPMAT	*sp_copy(A)
-SPMAT	*A;
+SPMAT *
+sp_copy (SPMAT *A)
 {
    SPMAT	*out;
    SPROW	*row1, *row2;
@@ -373,8 +370,8 @@ SPMAT	*A;
 
 /* sp_col_access -- set column access path; i.e. nxt_row, nxt_idx fields
    -- returns A */
-SPMAT	*sp_col_access(A)
-SPMAT	*A;
+SPMAT *
+sp_col_access (SPMAT *A)
 {
    int	i, j, j_idx, len, m, n;
    SPROW	*row;
@@ -414,8 +411,8 @@ SPMAT	*A;
 }
 
 /* sp_diag_access -- set diagonal access path(s) */
-SPMAT	*sp_diag_access(A)
-SPMAT	*A;
+SPMAT *
+sp_diag_access (SPMAT *A)
 {
    int	i, m;
    SPROW	*row;
@@ -462,8 +459,8 @@ MAT	*out;
 
 
 /*  C = A+B, can be in situ */
-SPMAT *sp_add(A,B,C)
-SPMAT *A, *B, *C;
+SPMAT *
+sp_add (SPMAT *A, SPMAT *B, SPMAT *C)
 {
    int i, in_situ;
    SPROW *rc;
@@ -509,8 +506,8 @@ SPMAT *A, *B, *C;
 }
 
 /*  C = A-B, cannot be in situ */
-SPMAT *sp_sub(A,B,C)
-SPMAT *A, *B, *C;
+SPMAT *
+sp_sub (SPMAT *A, SPMAT *B, SPMAT *C)
 {
    int i, in_situ;
    SPROW *rc;
@@ -556,9 +553,8 @@ SPMAT *A, *B, *C;
 }
 
 /*  C = A+alpha*B, cannot be in situ */
-SPMAT *sp_mltadd(A,B,alpha,C)
-SPMAT *A, *B, *C;
-double alpha;
+SPMAT *
+sp_mltadd (SPMAT *A, SPMAT *B, double alpha, SPMAT *C)
 {
    int i, in_situ;
    SPROW *rc;
@@ -607,9 +603,8 @@ double alpha;
 
 
 /*  B = alpha*A, can be in situ */
-SPMAT *sp_smlt(A,alpha,B)
-SPMAT *A, *B;
-double alpha;
+SPMAT *
+sp_smlt (SPMAT *A, double alpha, SPMAT *B)
 {
    int i;
 
@@ -630,8 +625,8 @@ double alpha;
 
 
 /* sp_zero -- zero all the (represented) elements of a sparse matrix */
-SPMAT	*sp_zero(A)
-SPMAT	*A;
+SPMAT *
+sp_zero (SPMAT *A)
 {
    int	i, idx, len;
    row_elt	*elt;
@@ -724,9 +719,8 @@ SPMAT	*A, *OUT;
 /* sp_resize -- resize a sparse matrix
    -- don't destroying any contents if possible
    -- returns resized matrix */
-SPMAT	*sp_resize(A,m,n)
-SPMAT	*A;
-int	m, n;
+SPMAT *
+sp_resize (SPMAT *A, int m, int n)
 {
    int	i, len;
    SPROW	*r;
@@ -807,9 +801,8 @@ int	m, n;
 
 
 /* sp_compact -- removes zeros and near-zeros from a sparse matrix */
-SPMAT	*sp_compact(A,tol)
-SPMAT	*A;
-double	tol;
+SPMAT *
+sp_compact (SPMAT *A, double tol)
 {
    int	i, idx1, idx2;
    SPROW	*r;

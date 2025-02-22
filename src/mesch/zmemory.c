@@ -36,8 +36,8 @@ static	char	rcsid[] = "zmemory.c,v 1.1 1997/12/04 17:56:13 hines Exp";
 
 /* zv_zero -- zeros all entries of a complex vector
    -- uses __zzero__() */
-ZVEC	*zv_zero(x)
-ZVEC	*x;
+ZVEC *
+zv_zero (ZVEC *x)
 {
    if ( ! x )
      error(E_NULL,"zv_zero");
@@ -48,8 +48,8 @@ ZVEC	*x;
 
 /* zm_zero -- zeros all entries of a complex matrix
    -- uses __zzero__() */
-ZMAT	*zm_zero(A)
-ZMAT	*A;
+ZMAT *
+zm_zero (ZMAT *A)
 {
    int		i;
    
@@ -62,8 +62,8 @@ ZMAT	*A;
 }
 
 /* zm_get -- gets an mxn complex matrix (in ZMAT form) */
-ZMAT	*zm_get(m,n)
-int	m,n;
+ZMAT *
+zm_get (int m, int n)
 {
    ZMAT	*matrix;
    u_int	i;
@@ -119,8 +119,8 @@ int	m,n;
 
 /* zv_get -- gets a ZVEC of dimension 'dim'
    -- Note: initialized to zero */
-ZVEC	*zv_get(size)
-int	size;
+ZVEC *
+zv_get (int size)
 {
    ZVEC	*vector;
 
@@ -146,8 +146,8 @@ int	size;
 }
 
 /* zm_free -- returns ZMAT & asoociated memory back to memory heap */
-int	zm_free(mat)
-ZMAT	*mat;
+int 
+zm_free (ZMAT *mat)
 {
 #ifdef SEGMENTED
    int	i;
@@ -192,8 +192,8 @@ ZMAT	*mat;
 
 
 /* zv_free -- returns ZVEC & asoociated memory back to memory heap */
-int	zv_free(vec)
-ZVEC	*vec;
+int 
+zv_free (ZVEC *vec)
 {
    if ( vec==(ZVEC *)NULL || (int)(vec->dim) < 0 )
      /* don't trust it */
@@ -224,9 +224,8 @@ ZVEC	*vec;
 
 /* zm_resize -- returns the matrix A of size new_m x new_n; A is zeroed
    -- if A == NULL on entry then the effect is equivalent to m_get() */
-ZMAT	*zm_resize(A,new_m,new_n)
-ZMAT	*A;
-int	new_m, new_n;
+ZMAT *
+zm_resize (ZMAT *A, int new_m, int new_n)
 {
    u_int	i, new_max_m, new_max_n, new_size, old_m, old_n;
    
@@ -359,9 +358,8 @@ int	new_m, new_n;
 
 /* zv_resize -- returns the (complex) vector x with dim new_dim
    -- x is set to the zero vector */
-ZVEC	*zv_resize(x,new_dim)
-ZVEC	*x;
-int	new_dim;
+ZVEC *
+zv_resize (ZVEC *x, int new_dim)
 {
    if (new_dim < 0)
      error(E_NEG,"zv_resize");

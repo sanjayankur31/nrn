@@ -71,8 +71,8 @@ VEC	*spCHsolve();
 /* cg_set_maxiter -- sets maximum number of iterations if numiter > 1
 	-- just returns current max_iter otherwise
 	-- returns old maximum */
-int	cg_set_maxiter(numiter)
-int	numiter;
+int 
+cg_set_maxiter (int numiter)
 {
 	int	temp;
 
