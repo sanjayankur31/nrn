@@ -151,8 +151,11 @@ int	size;
 }
 
 /* m_free -- returns MAT & asoociated memory back to memory heap */
-int	m_free(mat)
-MAT	*mat;
+int	m_free(void *v) {
+    return m_free_v((MAT *) v);
+}
+
+int	m_free_v(MAT *mat)
 {
 #ifdef SEGMENTED
    int	i;
@@ -198,8 +201,11 @@ MAT	*mat;
 
 
 /* px_free -- returns PERM & asoociated memory back to memory heap */
-int	px_free(px)
-PERM	*px;
+int	px_free(void *px)
+{
+    return px_free_v((PERM *) px);
+}
+int	px_free_v(PERM *px)
 {
    if ( px==(PERM *)NULL || (int)(px->size) < 0 )
      /* don't trust it */
@@ -228,8 +234,10 @@ PERM	*px;
 
 
 /* v_free -- returns VEC & asoociated memory back to memory heap */
-int	v_free(vec)
-VEC	*vec;
+int	v_free(void *vec) {
+    return v_free_v((VEC *)vec);
+}
+int	v_free_v(VEC *vec)
 {
    if ( vec==(VEC *)NULL || (int)(vec->dim) < 0 )
      /* don't trust it */

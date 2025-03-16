@@ -71,9 +71,7 @@ static char RCSid[] =
 
 #include "errcodes.h"
 
-int adams(_ninits, n, y, d, p, t, h, dy, work)
-int _ninits, n, (*dy) ();
-double p[], *t, h, **work; int y[]; int d[];
+int adams(int _ninits, int n, int y[], int d[], double p[], double *t, double h, int (* dy) (double []), double **work)
 #define d_(arg)  p[d[arg]]
 #define y_(arg)  p[y[arg]]
 {
@@ -81,8 +79,8 @@ double p[], *t, h, **work; int y[]; int d[];
     int i, n2, n3, n4, n5;
     static int count = 0;
     double *scratch;
-    extern int runge();
-    extern double *makevector();
+    extern int runge(int, int, int *, int *, double *, double *, double, int (*) (double []), double**);
+    extern double *makevector(int);
 
     n2 = n << 1;
     n3 = n2 + n;

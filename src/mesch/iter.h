@@ -159,7 +159,8 @@ int iter_std_stop_crit(ITER *ip, double nres, VEC *res,VEC *Bres);
 /* get, resize and free ITER variable */
 ITER *iter_get(int lenb, int lenx);
 ITER *iter_resize(ITER *ip,int lenb,int lenx);
-int iter_free(ITER *ip);
+int iter_free(void *ip);
+int iter_free_v(ITER *ip);
 
 void iter_dump(FILE *fp,ITER *ip);
 
@@ -178,7 +179,8 @@ SPMAT	*iter_gen_nonsym_posdef(int n,int nrow);
 void iter_std_info();
 int iter_std_stop_crit();
 ITER *iter_get();
-int iter_free();
+int iter_free(void *);
+int iter_free_v(ITER *);
 ITER *iter_resize();
 void iter_dump();
 ITER *iter_copy();

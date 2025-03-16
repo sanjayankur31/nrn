@@ -1236,7 +1236,7 @@ double	tol;
 
     /* now sort the rows arrays */
     for ( i = 0; i < A->m; i++ )
-	qsort(A->row[i].elt,A->row[i].len,sizeof(row_elt),(int(*)())col_cmp);
+	qsort(A->row[i].elt,A->row[i].len,sizeof(row_elt),(int(*)(const void *, const void *))col_cmp);
     A->flag_col = A->flag_diag = FALSE;
 
     return A;

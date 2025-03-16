@@ -221,7 +221,7 @@ int
 mem_stat_free_list (int mark, int list)
 {
    u_int i,j;
-   int	 (*free_fn)();
+   int	 (*free_fn)(void *);
 
    if ( list < 0 || list >= MEM_CONNECT_MAX_LISTS 
        || mem_connect[list].free_funcs == NULL )

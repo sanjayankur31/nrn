@@ -32,7 +32,7 @@ int adams(int ninits,
           double* p,
           double* t,
           double h,
-          int (*dy)(),
+          int (*dy)(double []),
           double** work);
 int euler(int ninits,
           int neqn,
@@ -59,7 +59,7 @@ int runge(int ninits,
           double* p,
           double* t,
           double h,
-          int (*dy)(),
+          int (*dy)(double []),
           double** work);
 
 int adeuler(int ninits,
@@ -79,7 +79,7 @@ int adrunge(int ninits,
             double* p,
             double* t,
             double dt,
-            int (*dy)(),
+            int (*dy)(double []),
             double** work,
             double maxerror);
 
@@ -97,7 +97,7 @@ int _advance(int ninits,
              int linflag);
 
 /* Solution of boundary value problems */
-int boundary(int npts, double* x, double* y, double (*f)(), double (*g)(), double (*q)());
+int boundary(int npts, double* x, double* y, double (*f)(double), double (*g)(double), double (*q)(double));
 
 /* Solution of parabolic partial differential equations */
 int crank(int n,

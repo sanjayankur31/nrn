@@ -71,8 +71,10 @@ int lb, ub, n;
    return A;
 }
 
-int bd_free(A)
-BAND *A;
+int bd_free(void *A){
+    return bd_free_v((BAND *)A);
+}
+int bd_free_v(BAND *A)
 {
    if ( A == (BAND *)NULL || A->lb < 0 || A->ub < 0 )
      /* don't trust it */

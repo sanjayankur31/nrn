@@ -100,7 +100,7 @@ extern	SPMAT	*sp_get(), *sp_copy(), *sp_copy2(),
 			*sp_zero(), *sp_resize(), *sp_compact();
 extern	double	sp_get_val(), sp_set_val();
 extern	VEC	*sp_mv_mlt(), *sp_vm_mlt();
-extern	int	sp_free();
+extern	int	sp_free(void *), sp_free_v(SPMAT *);
 
 /* Access path operations */
 extern	SPMAT	*sp_col_access();
@@ -121,7 +121,7 @@ extern	SPROW	*sprow_get(), *sprow_xpd(), *sprow_merge(), *sprow_mltadd(),
 extern SPROW *sprow_add(), *sprow_sub(), *sprow_smlt();
 extern	double	sprow_set_val();
 extern	void	sprow_foutput();
-extern	int	sprow_idx(), sprow_free();
+extern	int	sprow_idx(), sprow_free(void *), sprow_free_v(SPROW *);
 
 /* dump */
 extern  void   sp_dump(), sprow_dump();
@@ -134,7 +134,7 @@ SPMAT	*sp_get(int,int,int), *sp_copy(SPMAT *),
 	*sp_compact(SPMAT *,double);
 double	sp_get_val(SPMAT *,int,int), sp_set_val(SPMAT *,int,int,double);
 VEC	*sp_mv_mlt(SPMAT *,VEC *,VEC *), *sp_vm_mlt(SPMAT *,VEC *,VEC *);
-int	sp_free(SPMAT *);
+int	sp_free(void *), sp_free_v(SPMAT *);
 
 /* Access path operations */
 SPMAT	*sp_col_access(SPMAT *);
@@ -161,7 +161,8 @@ SPROW *sprow_add(SPROW *r1,SPROW *r2, int j0,SPROW *r_out, int type),
         *sprow_sub(SPROW *r1,SPROW *r2, int j0,SPROW *r_out, int type), 
         *sprow_smlt(SPROW *r1,double alpha, int j0,SPROW *r_out, int type);
 double	sprow_set_val(SPROW *,int,double);
-int      sprow_free(SPROW *);
+int      sprow_free(void *);
+int      sprow_free_v(SPROW *);
 int	sprow_idx(SPROW *,int);
 void	sprow_foutput(FILE *,SPROW *);
 

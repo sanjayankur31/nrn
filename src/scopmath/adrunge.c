@@ -59,9 +59,7 @@ static char RCSid[] =
 #include "errcodes.h"
 #include "scoplib.h"
 
-int adrunge(_ninits, n, y, d, p, t, dt, dy, work, maxerror)
-int _ninits, n, (*dy) ();
-double p[], *t, dt, **work, maxerror; int y[]; int d[];
+int adrunge(int _ninits, int n, int y[], int d[], double p[], double *t, double dt, int (*dy) (double []), double **work, double maxerror)
 #define d_(arg)  p[d[arg]]
 #define y_(arg)  p[y[arg]]
 {
@@ -69,7 +67,7 @@ double p[], *t, dt, **work, maxerror; int y[]; int d[];
     static int initialized = 0, steps;
     double T_err, temp, end_t;
     static double h, *ystore;
-	extern double *makevector();
+	extern double *makevector(int);
 
     if (ystore == (double *) 0)
 	ystore = makevector(n << 1);

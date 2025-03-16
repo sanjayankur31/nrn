@@ -59,16 +59,13 @@ static char RCSid[] =
 #include <math.h>
 #include "errcodes.h"
 
-int adeuler(_ninits, neqn, var, der, p, t, delta_t, func, work, maxerror)
-int _ninits;
-double p[], *t, delta_t, maxerror, **work; int var[]; int der[];
+int adeuler(int _ninits, int neqn, int var[], int der[], double p[], double *t, double delta_t, int (*func) (double []), double **work, double maxerror)
 #define der_(arg)  p[der[arg]]
 #define var_(arg)  p[var[arg]]
-int neqn, (*func) ();
 {
     static int initialized = 0;
     int i;
-    extern double *makevector();
+    extern double *makevector(int);
     double end_t, temp, Dderiv;
     static double dt;
 

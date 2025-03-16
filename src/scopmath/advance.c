@@ -17,7 +17,7 @@ static char RCSid[] =
 #include <math.h>
 #include "errcodes.h"
 #include "scoplib.h"
-static int oldsimeq();
+static int oldsimeq(int, double **, double *);
 /*-----------------------------------------------------------------------------
  *
  *  _ADVANCE
@@ -27,15 +27,12 @@ static int oldsimeq();
  *  and its identity is meant to be concealed from the user.
  *
  */
-int _advance(_ninits, n, s, d, p, t, dt, fun, pcoef, linflag)
-int n, _ninits, linflag;
-int (*fun) ();
-double *t, dt, *p, ***pcoef; int s[]; int d[];
+int _advance(int _ninits, int n, int s[], int d[], double *p, double *t, double dt, int (*fun) (), double ***pcoef, int linflag)
 #define d_(arg)  p[d[arg]]
 #define s_(arg)  p[s[arg]]
 {
     int i, j, ier;
-    double err, **makematrix(), **coef;
+    double err, **makematrix(int, int), **coef;
 
     if (!*pcoef)
     {
@@ -132,9 +129,7 @@ double *t, dt, *p, ***pcoef; int s[]; int d[];
 
 
 static int
-oldsimeq(n, coef, soln)
-int n;
-double *coef[], soln[];
+oldsimeq(int n, double *coef[], double soln[])
 {
     int ipivot, isave=0, jrow, kcol, i, j, *perm;
 

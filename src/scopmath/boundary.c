@@ -52,12 +52,10 @@ static char RCSid[] =
 /*								*/
 /*--------------------------------------------------------------*/
 #include "scoplib.h"
-int boundary(npts, x, y, f, g, q)
-int npts;
-double x[], y[], (*f) (), (*g) (), (*q) ();
+int boundary(int npts, double x[], double y[], double (*f) (double), double (*g) (double), double (*q) (double))
 {
-    extern int diag(), freevector();
-    extern double *makevector();
+    extern int diag(), freevector(double *);
+    extern double *makevector(int);
     int i, mesh, error;
     double *a, *b, *c, *d, h, temp;
 

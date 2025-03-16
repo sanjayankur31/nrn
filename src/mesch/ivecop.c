@@ -64,7 +64,10 @@ int	dim)
 }
 
 /* iv_free -- returns iv & asoociated memory back to memory heap */
-int	iv_free(
+int	iv_free(void *iv){
+    return iv_free_v((IVEC *) iv);
+}
+int	iv_free_v(
 IVEC	*iv)
 {
    if ( iv==IVNULL || iv->dim > MAXDIM )

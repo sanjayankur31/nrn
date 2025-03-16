@@ -77,7 +77,7 @@ z_finput (FILE *fp)
 ZMAT *
 zm_finput (FILE *fp, ZMAT *a)
 {
-     ZMAT        *izm_finput(),*bzm_finput();
+     ZMAT        *izm_finput(FILE *, ZMAT *),*bzm_finput(FILE *, ZMAT *);
      
      if ( isatty(fileno(fp)) )
 	  return izm_finput(fp,a);
@@ -190,7 +190,7 @@ bzm_finput (FILE *fp, ZMAT *mat)
 ZVEC *
 zv_finput (FILE *fp, ZVEC *x)
 {
-     ZVEC        *izv_finput(),*bzv_finput();
+     ZVEC        *izv_finput(FILE *, ZVEC *),*bzv_finput(FILE *, ZVEC *);
      
      if ( isatty(fileno(fp)) )
 	  return izv_finput(fp,x);

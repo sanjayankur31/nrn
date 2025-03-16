@@ -53,7 +53,7 @@ double
 sprow_ip (SPROW *row1, SPROW *row2, int lim)
 {
 	int			idx1, idx2, len1, len2, tmp;
-	int			sprow_idx();
+	int			sprow_idx(SPROW *, int);
 	register row_elt	*elts1, *elts2;
 	register Real		sum;
 

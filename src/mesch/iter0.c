@@ -115,7 +115,10 @@ int lenb, int lenx)
 
 
 /* iter_free - release memory */
-int iter_free(
+int iter_free(void *ip){
+    return iter_free_v((ITER *) ip);
+}
+int iter_free_v(
 ITER *ip)
 {
    if (ip == (ITER *)NULL) return -1;

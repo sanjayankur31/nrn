@@ -147,7 +147,11 @@ zv_get (int size)
 
 /* zm_free -- returns ZMAT & asoociated memory back to memory heap */
 int 
-zm_free (ZMAT *mat)
+zm_free (void *mat) {
+    return zm_free_v((ZMAT *) mat);
+}
+int 
+zm_free_v (ZMAT *mat)
 {
 #ifdef SEGMENTED
    int	i;
@@ -193,7 +197,11 @@ zm_free (ZMAT *mat)
 
 /* zv_free -- returns ZVEC & asoociated memory back to memory heap */
 int 
-zv_free (ZVEC *vec)
+zv_free (void *vec) {
+    return zv_free_v((ZVEC *) vec);
+}
+int 
+zv_free_v (ZVEC *vec)
 {
    if ( vec==(ZVEC *)NULL || (int)(vec->dim) < 0 )
      /* don't trust it */

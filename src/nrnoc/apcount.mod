@@ -20,9 +20,9 @@ ASSIGNED {
 }
 
 VERBATIM
-extern void vector_resize();
-extern double* vector_vec();
-extern void* vector_arg();
+extern void vector_resize(void *, int);
+extern double* vector_vec(void *);
+extern void* vector_arg(int);
 ENDVERBATIM
 
 INITIAL {
@@ -66,7 +66,7 @@ ENDVERBATIM
 
 PROCEDURE record() {
 VERBATIM
-	extern void* vector_arg();
+	extern void* vector_arg(int);
 	void** vv;
 	vv = (void**)(&space);
 	*vv = (void*)0;

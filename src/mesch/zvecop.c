@@ -144,7 +144,7 @@ zv_sub (ZVEC *vec1, ZVEC *vec2, ZVEC *out)
 /* zv_map -- maps function f over components of x: out[i] = f(x[i])
 	-- _zv_map sets out[i] = f(x[i],params) */
 ZVEC *
-zv_map (complex (*f)(void), ZVEC *x, ZVEC *out)
+zv_map (complex (*f)(complex), ZVEC *x, ZVEC *out)
 {
 	complex	*x_ve, *out_ve;
 	int	i, dim;
@@ -162,7 +162,7 @@ zv_map (complex (*f)(void), ZVEC *x, ZVEC *out)
 }
 
 ZVEC *
-_zv_map (complex (*f)(void), void *params, ZVEC *x, ZVEC *out)
+_zv_map (complex (*f)(void *, complex), void *params, ZVEC *x, ZVEC *out)
 {
 	complex	*x_ve, *out_ve;
 	int	i, dim;

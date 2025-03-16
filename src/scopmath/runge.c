@@ -64,15 +64,13 @@ static char RCSid[] =
 
 #include "errcodes.h"
 
-int runge(_ninits, n, y, d, p, t, h, dy, work)
-int _ninits, n, (*dy) ();
-double p[], *t, h, **work; int y[]; int d[];
+int runge(int _ninits, int n, int y[], int d[], double p[], double *t, double h, int (*dy) (double []), double **work)
 #define d_(arg)  p[d[arg]]
 #define y_(arg)  p[y[arg]]
 {
     int i;
     double temp;
-    extern double *makevector();
+    extern double *makevector(int);
 
     if (*work == (double *) 0)
 	*work = makevector(n << 1);

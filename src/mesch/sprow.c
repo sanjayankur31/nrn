@@ -253,7 +253,11 @@ sprow_resize (SPROW *r, int n, int type)
 
 /* release a row of a matrix */
 int 
-sprow_free (SPROW *r)
+sprow_free (void *r) {
+    return sprow_free_v((SPROW *) r);
+}
+int 
+sprow_free_v (SPROW *r)
 {
    if ( ! r )
      return -1;
