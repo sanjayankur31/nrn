@@ -2,20 +2,17 @@
 #include "errcodes.h"
 #define s_(arg)	p[s[arg]]
 
+typedef	int (*FUN)(void*, double*, double*, void*, void*, void*);
+
 extern double _modl_get_dt_thread(void*);
 extern void _modl_set_dt_thread(double, void*);
-extern int sparse_thread();
-extern int derivimplicit_thread();
+extern int sparse_thread(void **, int , int *, int *, double *, double *, double , FUN, int , void *, void *, void *);
+extern int derivimplicit_thread(int, int *, int *, double *, int (*)(double *, void*, void*, void*), void*, void *, void*);
 
-static int check_state();
+static int check_state(int, int *, double *);
 
-int _ss_sparse_thread(v, n, s, d, p, t, dt, fun, linflag, ppvar, thread, nt)
-	void** v;
-        int n, linflag;
-        int (*fun)();
-        double *t, dt, *p;
-        int *s, *d;   
-	void* ppvar; void* thread; void* nt;
+int 
+_ss_sparse_thread (void **v, int n, int *s, int *d, double *p, double *t, double dt, FUN fun, int linflag, void *ppvar, void *thread, void *nt)
 {
 	int err, i;
 	double ss_dt;
@@ -62,10 +59,8 @@ _ss_derivimplicit_thread(int n, int* slist, int* dlist, double* p,
 	return err;
 }
 
-static int
-check_state(n, s, p)
-	int n, *s;
-	double *p;
+static int 
+check_state (int n, int *s, double *p)
 {
 	int i, flag;
 	

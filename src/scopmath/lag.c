@@ -76,18 +76,16 @@ typedef struct varlist
 }
     varlist;
 
-static void makevar();
-static void makenode();
-static void freevars();
-static void freenode();
-static int getinterpval();
+static void makevar(varlist **, double *, int , double );
+static void makenode(node **, double , double *, int );
+static void freevars(varlist *);
+static void freenode(node *);
+static int getinterpval(node *, node *, double , double *, int );
 
 double *
-lag(var, curt, lagt, vsize)
-double *var, curt, lagt;
-int vsize;
+lag(double *var, double curt, double lagt, int vsize)
 {
-    void makevar(), freevars(), makenode(), freenode();
+    void makevar(varlist **, double *, int , double ), freevars(varlist *), makenode(node **, double , double *, int ), freenode(node *);
     static varlist *lagvars = NULL;
     varlist *listptr, *lastvar = NULL;
     node *nodeptr, *nextnode;
@@ -157,10 +155,7 @@ int vsize;
 }
 
 static void
-makevar(newvar, address, size, delay)
-varlist **newvar;
-int size;
-double *address, delay;
+makevar(varlist **newvar, double *address, int size, double delay)
 {
 
     /* Allocate storage for new element of varlist */
@@ -177,10 +172,9 @@ double *address, delay;
 }
 
 static void
-freevars(list)
-varlist *list;
+freevars(varlist *list)
 {
-    void freenode();
+    void freenode(node *);
     varlist *listptr, *nextptr;
     node *nodeptr, *nextnode;
 
@@ -200,10 +194,7 @@ varlist *list;
 }
 
 static void
-makenode(nodeptr, t, dataptr, datasize)
-node **nodeptr;
-double t, *dataptr;
-int datasize;
+makenode(node **nodeptr, double t, double *dataptr, int datasize)
 {
     int i;
 
@@ -219,19 +210,14 @@ int datasize;
     (*nodeptr)->next = NULL;
 }
 
-static void
-freenode(nodeptr)
-node *nodeptr;
+static void freenode(node *nodeptr)
 {
     free((char *) nodeptr->value);
     free((char *) nodeptr);
 }
 
 static int
-getinterpval(start, end, t, interpval, dimension)
-node *start, *end;
-double t, *interpval;
-int dimension;
+getinterpval(node *start, node *end, double t, double *interpval, int dimension)
 {
     int i;
     double t_ratio;

@@ -77,9 +77,9 @@ static char RCSid[] =
 
 
 /* avoid "declared implicitly `extern' and later `static' " warnings. */
-static void InitializeElementBlocks();
-static void RecordAllocation();
-static void AllocateBlockOfAllocationList();
+static void InitializeElementBlocks(MatrixPtr, int, int);
+static void RecordAllocation(MatrixPtr, char *);
+static void AllocateBlockOfAllocationList(MatrixPtr);
 
 
 /*
@@ -121,9 +121,9 @@ static void AllocateBlockOfAllocationList();
 char *
 spCreate( int Size, BOOLEAN Complex, int* pError )
 {
-register  unsigned  SizePlusOne;
-register  MatrixPtr  Matrix;
-register  int  I;
+ unsigned  SizePlusOne;
+ MatrixPtr  Matrix;
+ int  I;
 int  AllocatedSize;
 
 /* Begin `spCreate'. */
@@ -310,9 +310,7 @@ MemoryError:
  */
 
 ElementPtr
-spcGetElement( Matrix )
-
-MatrixPtr Matrix;
+spcGetElement( MatrixPtr Matrix )
 {
 ElementPtr  pElement;
 
@@ -371,11 +369,8 @@ ElementPtr  pElement;
  */
 
 static
-void InitializeElementBlocks( Matrix, InitialNumberOfElements,
-                         NumberOfFillinsExpected )
-
-MatrixPtr Matrix;
-int  InitialNumberOfElements, NumberOfFillinsExpected;
+void InitializeElementBlocks( MatrixPtr Matrix, int InitialNumberOfElements,
+                         int NumberOfFillinsExpected )
 {
 ElementPtr  pElement;
 
@@ -437,9 +432,7 @@ ElementPtr  pElement;
  */
 
 ElementPtr
-spcGetFillin( Matrix )
-
-MatrixPtr Matrix;
+spcGetFillin(MatrixPtr Matrix )
 {
 struct FillinListNodeStruct *pListNode;
 ElementPtr  pFillins;
@@ -514,10 +507,7 @@ ElementPtr  pFillins;
  */
 
 static
-void RecordAllocation( Matrix, AllocatedPtr )
-
-MatrixPtr Matrix;
-char  *AllocatedPtr;
+void RecordAllocation( MatrixPtr Matrix, char *AllocatedPtr )
 {
 /* Begin `RecordAllocation'. */
 /*
@@ -571,12 +561,10 @@ char  *AllocatedPtr;
  */
 
 static
-void AllocateBlockOfAllocationList( Matrix )
-
-MatrixPtr Matrix;
+void AllocateBlockOfAllocationList( MatrixPtr Matrix )
 {
-register  int  I;
-register  AllocationListPtr  ListPtr;
+ int  I;
+ AllocationListPtr  ListPtr;
 
 /* Begin `AllocateBlockOfAllocationList'. */
 /* Allocate block of records for allocation list. */
@@ -632,12 +620,10 @@ register  AllocationListPtr  ListPtr;
  */
 
 void
-spDestroy( eMatrix )
-
-register char *eMatrix;
+spDestroy(char * eMatrix )
 {
 MatrixPtr Matrix = (MatrixPtr)eMatrix;
-register  AllocationListPtr  ListPtr, NextListPtr;
+ AllocationListPtr  ListPtr, NextListPtr;
 
 
 /* Begin `spDestroy'. */
@@ -689,9 +675,7 @@ register  AllocationListPtr  ListPtr, NextListPtr;
  */
 
 int
-spError( eMatrix )
-
-char  *eMatrix;
+spError(char * eMatrix )
 {
 /* Begin `spError'. */
 
@@ -727,10 +711,7 @@ char  *eMatrix;
  */
 
 void
-spWhereSingular( eMatrix, pRow, pCol )
-
-char *eMatrix;
-int *pRow, *pCol;
+spWhereSingular(char * eMatrix, int *pRow, int *pCol )
 {
 MatrixPtr Matrix = (MatrixPtr)eMatrix;
 
@@ -767,10 +748,7 @@ MatrixPtr Matrix = (MatrixPtr)eMatrix;
  */
 
 int
-spGetSize( eMatrix, External )
-
-char  *eMatrix;
-BOOLEAN  External;
+spGetSize(char * eMatrix, BOOLEAN External )
 {
 MatrixPtr Matrix = (MatrixPtr)eMatrix;
 
@@ -805,9 +783,7 @@ MatrixPtr Matrix = (MatrixPtr)eMatrix;
  */
 
 void
-spSetReal( eMatrix )
-
-char *eMatrix;
+spSetReal(char * eMatrix )
 {
 /* Begin `spSetReal'. */
 
@@ -818,9 +794,7 @@ char *eMatrix;
 
 
 void
-spSetComplex( eMatrix )
-
-char  *eMatrix;
+spSetComplex(char * eMatrix )
 {
 /* Begin `spSetComplex'. */
 
@@ -849,9 +823,7 @@ char  *eMatrix;
  */
 
 int
-spFillinCount( eMatrix )
-
-char *eMatrix;
+spFillinCount(char * eMatrix )
 {
 /* Begin `spFillinCount'. */
 
@@ -861,9 +833,7 @@ char *eMatrix;
 
 
 int
-spElementCount( eMatrix )
-
-char  *eMatrix;
+spElementCount(char * eMatrix )
 {
 /* Begin `spElementCount'. */
 

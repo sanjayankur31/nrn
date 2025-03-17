@@ -77,9 +77,9 @@ static char RCSid[] =
 
 /* avoid "declared implicitly `extern' and later `static' " warnings. */
 
-static void Translate();
-static void EnlargeMatrix();
-static void ExpandTranslationArrays();
+static void Translate(MatrixPtr, int*, int*);
+static void EnlargeMatrix(MatrixPtr, int);
+static void ExpandTranslationArrays(MatrixPtr, int);
 
 
 
@@ -97,14 +97,12 @@ static void ExpandTranslationArrays();
  *     A pointer to the element being cleared.
  */
 
-void
-spClear( eMatrix )
-
-char *eMatrix;
+void 
+spClear (char *eMatrix)
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
-register  ElementPtr  pElement;
-register  int  I;
+ElementPtr  pElement;
+int  I;
 
 /* Begin `spClear'. */
     ASSERT( IS_SPARSE( Matrix ) );
@@ -192,14 +190,11 @@ register  int  I;
  */
 
 RealNumber *
-spGetElement( eMatrix, Row, Col )
-
-char *eMatrix;
-int  Row, Col;
+spGetElement( char *eMatrix, int Row, int Col )
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
 RealNumber  *pElement;
-ElementPtr spcFindElementInCol();
+ElementPtr spcFindElementInCol(MatrixPtr , ElementPtr *, int , int , BOOLEAN );
 
 /* Begin `spGetElement'. */
     ASSERT( IS_SPARSE( Matrix ) AND Row >= 0 AND Col >= 0 );
@@ -297,16 +292,11 @@ ElementPtr spcFindElementInCol();
  */
 
 ElementPtr
-spcFindElementInCol( Matrix, LastAddr, Row, Col, CreateIfMissing )
+spcFindElementInCol( MatrixPtr Matrix, ElementPtr *LastAddr, int Row, int Col, BOOLEAN CreateIfMissing )
 
-MatrixPtr Matrix;
-register ElementPtr *LastAddr;
-register int  Row;
-int  Col;
-BOOLEAN  CreateIfMissing;
 {
-register  ElementPtr  pElement;
-ElementPtr  spcCreateElement();
+ ElementPtr  pElement;
+ElementPtr  spcCreateElement(MatrixPtr , int , int , ElementPtr *, BOOLEAN);
 
 /* Begin `spcFindElementInCol'. */
     pElement = *LastAddr;
@@ -375,12 +365,9 @@ ElementPtr  spcCreateElement();
  */
 
 static void
-Translate( Matrix, Row, Col )
-
-MatrixPtr Matrix;
-int  *Row, *Col;
+Translate( MatrixPtr Matrix, int *Row, int *Col )
 {
-register int IntRow, IntCol, ExtRow, ExtCol;
+int IntRow, IntCol, ExtRow, ExtCol;
 
 /* Begin `Translate'. */
     ExtRow = *Row;
@@ -486,12 +473,8 @@ register int IntRow, IntCol, ExtRow, ExtCol;
  *  Error is not cleared in this routine.
  */
 
-int
-spGetAdmittance( Matrix, Node1, Node2, Template )
-
-char  *Matrix;
-int  Node1, Node2;
-struct  spTemplate  *Template;
+int 
+spGetAdmittance (char *Matrix, int Node1, int Node2, struct spTemplate *Template)
 {
 
 /* Begin `spGetAdmittance'. */
@@ -574,12 +557,8 @@ struct  spTemplate  *Template;
  *  Error is not cleared in this routine.
  */
 
-int
-spGetQuad( Matrix, Row1, Row2, Col1, Col2, Template )
-
-char  *Matrix;
-int  Row1, Row2, Col1, Col2;
-struct  spTemplate  *Template;
+int 
+spGetQuad (char *Matrix, int Row1, int Row2, int Col1, int Col2, struct spTemplate *Template)
 {
 /* Begin `spGetQuad'. */
     Template->Element1 = spGetElement( Matrix, Row1, Col1);
@@ -649,12 +628,8 @@ struct  spTemplate  *Template;
  *  Error is not cleared in this routine.
  */
 
-int
-spGetOnes(Matrix, Pos, Neg, Eqn, Template)
-
-char  *Matrix;
-int  Pos, Neg, Eqn;
-struct  spTemplate  *Template;
+int 
+spGetOnes (char *Matrix, int Pos, int Neg, int Eqn, struct spTemplate *Template)
 {
 /* Begin `spGetOnes'. */
     Template->Element4Negated = spGetElement( Matrix, Neg, Eqn );
@@ -720,16 +695,10 @@ struct  spTemplate  *Template;
  */
 
 ElementPtr
-spcCreateElement( Matrix, Row, Col, LastAddr, Fillin )
-
-MatrixPtr Matrix;
-int  Row;
-register int  Col;
-register ElementPtr  *LastAddr;
-BOOLEAN Fillin;
+spcCreateElement( MatrixPtr Matrix, int Row, int Col, ElementPtr *LastAddr, BOOLEAN Fillin )
 {
-register  ElementPtr  pElement, pLastElement;
-ElementPtr  pCreatedElement, spcGetElement(), spcGetFillin();
+ ElementPtr  pElement, pLastElement;
+ElementPtr  pCreatedElement, spcGetElement(MatrixPtr), spcGetFillin(MatrixPtr);
 
 /* Begin `spcCreateElement'. */
 
@@ -860,19 +829,17 @@ ElementPtr  pCreatedElement, spcGetElement(), spcGetFillin();
  *      currently being operated upon.
  *  FirstInRowArray  (ArrayOfElementPtrs)
  *      A pointer to the FirstInRow array.  Same as Matrix->FirstInRow but
- *      resides in a register and requires less indirection so is faster to
+ *      resides in a and requires less indirection so is faster to
  *      use.
  *  Col  (int)
  *      Column currently being operated upon.
  */
 
-void spcLinkRows( Matrix )
-
-MatrixPtr Matrix;
+void spcLinkRows( MatrixPtr Matrix )
 {
-register  ElementPtr  pElement, *FirstInRowEntry;
-register  ArrayOfElementPtrs  FirstInRowArray;
-register  int  Col;
+ ElementPtr  pElement, *FirstInRowEntry;
+ ArrayOfElementPtrs  FirstInRowArray;
+ int  Col;
 
 /* Begin `spcLinkRows'. */
     FirstInRowArray = Matrix->FirstInRow;
@@ -917,12 +884,9 @@ register  int  Col;
  */
 
 static
-void EnlargeMatrix( Matrix, NewSize )
-
-MatrixPtr Matrix;
-register int  NewSize;
+void EnlargeMatrix( MatrixPtr Matrix, int NewSize )
 {
-register int I, OldAllocatedSize = Matrix->AllocatedSize;
+int I, OldAllocatedSize = Matrix->AllocatedSize;
 
 /* Begin `EnlargeMatrix'. */
     Matrix->Size = NewSize;
@@ -1006,12 +970,9 @@ register int I, OldAllocatedSize = Matrix->AllocatedSize;
  */
 
 static
-void ExpandTranslationArrays( Matrix, NewSize )
-
-MatrixPtr Matrix;
-register int  NewSize;
+void ExpandTranslationArrays( MatrixPtr Matrix, int NewSize )
 {
-register int I, OldAllocatedSize = Matrix->AllocatedExtSize;
+int I, OldAllocatedSize = Matrix->AllocatedExtSize;
 
 /* Begin `ExpandTranslationArrays'. */
     Matrix->ExtSize = NewSize;
@@ -1108,14 +1069,11 @@ RealNumber *pElement;
 }
 
 
-int
-spInitialize( eMatrix, pInit )
-
-char *eMatrix;
-int (*pInit)();
+int 
+spInitialize (char *eMatrix, int (*pInit)(void))
 {
 MatrixPtr Matrix = (MatrixPtr)eMatrix;
-register ElementPtr pElement;
+ElementPtr pElement;
 int J, Error, Col;
 
 /* Begin `spInitialize'. */

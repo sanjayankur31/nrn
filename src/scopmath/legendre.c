@@ -45,8 +45,7 @@ double zero[10] = {-0.9739065285, -0.8650633677, -0.6794095683, -0.4333953941,
 0.1494513492, 0.0666713443};
 
 double 
-legendre(a, b, func)
-double a, b, (*func) ();
+legendre(double a, double b, double (*func) (double))
 {
     int i;
     double integral = 0.0;

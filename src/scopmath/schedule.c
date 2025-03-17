@@ -50,13 +50,10 @@ typedef struct event
     struct event *next_event;
 }   event_t;
 
-static void init_event();
+static void init_event(event_t **, char *);
 
 double
-schedule(reset_integ, old_value, t, filename)
-double *old_value, t;
-int *reset_integ;
-char *filename;
+schedule(int *reset_integ, double *old_value, double t, char *filename)
 {
     static event_t *event_root = (event_t *) 0; /* Root of linked list of schedules */
     event_t *curr_event;
@@ -106,18 +103,13 @@ char *filename;
 	return (0.0);
 }
 
-static void init_event(new_event, filename)
-event_t **new_event;
-char *filename;
+static void init_event(event_t **new_event, char *filename)
 {
-    FILE *datafile, *fopen();
+    FILE *datafile;
     int nevent = -6, i;
     char buff[81];
-#ifndef MAC
-    extern char *fgets();
-#endif
-    extern double *makevector();
-    extern int abort_run();
+    extern double *makevector(int);
+    extern int abort_run(int);
 
     if ((datafile = fopen(filename, "r")) == NULL)
 	abort_run(NODATA);

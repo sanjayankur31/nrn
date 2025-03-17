@@ -56,12 +56,11 @@ static char RCSid[] =
  *
  *--------------------------------------------------------------------------*/
 
-int deflate(degree, pcoeff, root)
-double degree, pcoeff[], root[];
+int deflate(double degree, double pcoeff[], double root[])
 {
     int n, ndeg, iter, i, status = CONTINUE;
-    extern int freevector();
-    extern double *makevector();
+    extern int freevector(double *);
+    extern double *makevector(int);
     double *qcoeff, r = 0.01, slope, remainder, rnew;
 
     /* r is the current approximation to the next root to be found */

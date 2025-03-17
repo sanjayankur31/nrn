@@ -73,7 +73,7 @@ typedef struct SparseObj { /* all the state information */
   Elm**	diag;
   unsigned neqn;
   unsigned* varord;
-  int (*oldfun)();
+  int (*oldfun)(int, int);
   int phase;
   /* don't really need the rest */
   Item** roworder;
@@ -116,17 +116,16 @@ static int ninst;
 	varord[el->col] < varord[el->r_down->col]
 */
 	
-extern void *emalloc();		/* in sparse.c */
-static int vector_matsol();
-static Elm *getelm();
+extern void *emalloc(int);		/* in sparse.c */
+static int vector_matsol(SparseObj *, int ,int ,int *);
+static Elm *getelm(unsigned, unsigned, Elm *);
 
 
-static void sparseobj2local();
-static void local2sparseobj();
+static void sparseobj2local(SparseObj *);
+static void local2sparseobj(SparseObj *);
 static double d;
 
-double * _vector_getelm( row, col)
-  int  row, col;
+double * _vector_getelm( int row, int col)
 {
   row++; col++;			/* note: start at 1, not 0 */
 	if (!phase) {
@@ -136,10 +135,9 @@ double * _vector_getelm( row, col)
 	return &(getelm( (unsigned)row, (unsigned)col, ELM0)->value[0]);
 }
 
-SparseObj * create_sparseobj(ninst,neqn,linflag)
-     int ninst,neqn,linflag;
+SparseObj * create_sparseobj(int ninst,int neqn,int linflag)
 {
-  int i, j, k;
+  int i, k;
   SparseObj * so = (SparseObj *) malloc (sizeof(SparseObj));
   double ** t;
 
@@ -207,19 +205,19 @@ SparseObj * create_sparseobj(ninst,neqn,linflag)
   return so;
 }
 
-static void subrow();
-static void bksub();
+static void subrow(int , int , Elm *, Elm *);
+static void bksub(int, int);
 static void free_elm();
-static void create_coef_list();
-static void init_coef_list();
-static void increase_order();
-static void reduce_order();
+static void create_coef_list(int , int , int , int , int (*)(int, int));
+static void init_coef_list(int, int);
+static void increase_order(unsigned);
+static void reduce_order(unsigned);
 static void spar_minorder();
-static void get_next_pivot();
-static void freelist();
+static void get_next_pivot(unsigned);
+static void freelist(List *);
 static void check_assert();
-static void re_link();
-static void delete();
+static void re_link(unsigned);
+static void delete_(Item *);
 
 /*-----------------------------------------------------------------------------
  * THIS NEEDS UPDATING
@@ -256,35 +254,14 @@ static void delete();
  *
 */
 
-int _vector_sparse(base, bound, count, jacobp, spacep, sparseobj, neqns, state,
-	       deriv, data, t, delta_t, vfun, fun, rhsp, linflag)
-     int base;			/* first instances */
-     int bound;			/* last instance + 1 */
-     int count;			/* total number of instances */
-     double *** jacobp;		/* pointer to list of jacobians */
-				/* accessed as *jacobp[element][instance] */
-     double *** spacep;		/* pointer to workpace */
-				/* accessed as *spacep[variable][instance] */
-     void ** sparseobj;		/* pointer to sparse obj for this mechanism */
-     int neqns;			/* number of state variables */
-     int state[];		/* index of state vars in data */
-     int deriv[];		/* index of derivs in data */
-     double * data[];		/* list of intance data, inst is first idx! */
-				/* accessed as data[instance][parameter] */
-     double * t;		/* pointer to time */
-     double delta_t;		/* delta t */
-     int (*vfun)();		/* function to compute jacobian entries */
-     int (*fun)();		/* function which calls _vector_getelm */
-     double *** rhsp;		/* pointer to list of right hand sides */
-				/* accessed as *rhsp[variable][instance] */
-     int linflag;		/* if != 0 then linear */
+int _vector_sparse(int base, int bound, int count, double ***jacobp, double ***spacep, void ***sparseobj, int neqns, int state[],
+	       int deriv[], double **data, double *t, double delta_t, int (*vfun)(int, int), int (*fun)(int, int), double ***rhsp, int linflag)
 {
   int i, j, k, ierr;
   double * err=0;
   SparseObj* so;
   int nconverged = 0;
   int * converged=0;
-  int zero = 0;
   static SparseObj* old_sparseobj = NULL;
    
   so = (SparseObj *) *sparseobj;	/* translater uses void pointer */
@@ -292,7 +269,7 @@ int _vector_sparse(base, bound, count, jacobp, spacep, sparseobj, neqns, state,
   if (!so)
     {				/* first time in this mechanism */
       so = create_sparseobj(ninst,neqns,linflag);
-      *sparseobj = (void *) so;		/* so that it is set on next call */
+      *sparseobj = (void **) so;		/* so that it is set on next call */
       *jacobp = so->jacob;
       jacob = so->jacob;
       *rhsp = so->rhs;
@@ -465,11 +442,10 @@ int _vector_sparse(base, bound, count, jacobp, spacep, sparseobj, neqns, state,
 #endif
 
 
-static int vector_matsol(so,_ix1,_ix2,converged)
-      SparseObj *so; int _ix1,_ix2; int *converged;
+static int vector_matsol(SparseObj *so, int _ix1,int _ix2,int *converged)
 {
         int _ix;
-	register Elm *pivot, *el;
+	Elm *pivot, *el;
 	unsigned i;
 
 	/* Upper triangularization */
@@ -489,12 +465,10 @@ static int vector_matsol(so,_ix1,_ix2,converged)
 }
 
 
-static void subrow(_ix1, _ix2, pivot, rowsub)
-         int _ix1, _ix2;
-          Elm *pivot, *rowsub;
+static void subrow(int _ix1, int _ix2, Elm *pivot, Elm *rowsub)
 {
   int _ix;
-  register Elm *el;
+  Elm *el;
 
   _INSTANCE_LOOP {
     r_subrow[_ix] = (rowsub->value)[_ix] / (pivot->value)[_ix];
@@ -510,8 +484,7 @@ static void subrow(_ix1, _ix2, pivot, rowsub)
   }
 }
 
-static void bksub(_ix1, _ix2)
-         int _ix1, _ix2;
+static void bksub(int _ix1, int _ix2)
 {
   int _ix;
   unsigned i;
@@ -556,13 +529,10 @@ static void prmat()
 	IGNORE(fflush(stdin));
 }
 
-static void initeqn(_ix1, _ix2, count, maxeqn) /* reallocate space for matrix */
-     int _ix1, _ix2, count ;
-     unsigned maxeqn;
+static void initeqn(int _ix1, int _ix2, int count, unsigned maxeqn) /* reallocate space for matrix */
 {
   int _ix = _ix1;
-  register unsigned i;
-  double *val;
+  unsigned i;
 
   if (maxeqn == neqn) return;
   free_elm();
@@ -618,13 +588,10 @@ The biggest difference is that elements are no longer removed and this
 saves much time allocating and freeing during the solve phase
 */
 
-static Elm * getelm( row, col, new)
-   register Elm *new;
-   unsigned row, col;		/* 1..n+1 */
+static Elm * getelm( unsigned row, unsigned col, Elm *new_)
    /* return pointer to row col element maintaining order in rows */
 {
-        int _ix = 0;
-	register Elm *el, *elnext;
+	Elm *el, *elnext;
 	unsigned vrow, vcol;
 	
 	vrow = varord[row];
@@ -646,16 +613,16 @@ static Elm * getelm( row, col, new)
 			}
 		}
 		/* insert below el */
-		if (!new) {
-			new = (Elm *)emalloc(sizeof(Elm));
-                        new->value = jacob[(row-1)*neqn + col-1];
+		if (!new_) {
+			new_ = (Elm *)emalloc(sizeof(Elm));
+                        new_->value = jacob[(row-1)*neqn + col-1];
 			increase_order(row);
 		}
-		new->r_down = el->r_down;
-		el->r_down = new;
-		new->r_up = el;
-		if (new->r_down) {
-			new->r_down->r_up = new;
+		new_->r_down = el->r_down;
+		el->r_down = new_;
+		new_->r_up = el;
+		if (new_->r_down) {
+			new_->r_down->r_up = new_;
 		}
 		/* search leftward from diag[vrow] */
 		for (el=diag[vrow]; ; el = elnext) {
@@ -667,13 +634,13 @@ static Elm * getelm( row, col, new)
 			}
 		}
 		/* insert to left of el */
-		new->c_left = el->c_left;
-		el->c_left = new;
-		new->c_right = el;
-		if (new->c_left) {
-			new->c_left->c_right = new;
+		new_->c_left = el->c_left;
+		el->c_left = new_;
+		new_->c_right = el;
+		if (new_->c_left) {
+			new_->c_left->c_right = new_;
 		}else{
-			rowst[vrow] = new;
+			rowst[vrow] = new_;
 		}
 	} else { /* in the upper triangle */
 		/* search upward from diag[vcol] */
@@ -688,16 +655,16 @@ static Elm * getelm( row, col, new)
 			}
 		}
 		/* insert above el */
-		if (!new) {
-			new = (Elm *)emalloc(sizeof(Elm));
-                        new->value = jacob[(row-1)*neqn + col-1];
+		if (!new_) {
+			new_ = (Elm *)emalloc(sizeof(Elm));
+                        new_->value = jacob[(row-1)*neqn + col-1];
 			increase_order(row);
 		}
-		new->r_up = el->r_up;
-		el->r_up = new;
-		new->r_down = el;
-		if (new->r_up) {
-			new->r_up->r_down = new;
+		new_->r_up = el->r_up;
+		el->r_up = new_;
+		new_->r_down = el;
+		if (new_->r_up) {
+			new_->r_up->r_down = new_;
 		}
 		/* search right from diag[vrow] */
 		for (el=diag[vrow]; ; el = elnext) {
@@ -709,21 +676,19 @@ static Elm * getelm( row, col, new)
 			}
 		}
 		/* insert to right of el */
-		new->c_right = el->c_right;
-		el->c_right = new;
-		new->c_left = el;
-		if (new->c_right) {
-			new->c_right->c_left = new;
+		new_->c_right = el->c_right;
+		el->c_right = new_;
+		new_->c_left = el;
+		if (new_->c_right) {
+			new_->c_right->c_left = new_;
 		}
 	}
-	new->row = row;
-	new->col = col;
-	return new;
+	new_->row = row;
+	new_->col = col;
+	return new_;
 }
 
-static void create_coef_list(_ix1, _ix2, count, n, fun)
-	int _ix1, _ix2, n, count;
-	int (*fun)();
+static void create_coef_list(int _ix1, int _ix2, int count, int n, int (*fun)(int, int))
 {
 	initeqn(_ix1, _ix2, count, (unsigned)n);
 	phase = 1;
@@ -735,8 +700,7 @@ static void create_coef_list(_ix1, _ix2, count, n, fun)
 }
 
 
-static void init_coef_list(_ix1, _ix2) 
-	int _ix1, _ix2;
+static void init_coef_list(int _ix1, int _ix2) 
 {
         int _ix;
         unsigned i;
@@ -753,7 +717,7 @@ static void init_coef_list(_ix1, _ix2)
 static Item *newitem();
 static List *newlist();
 
-static void insert();
+static void insert(Item *);
 
 static void init_minorder() {
 	/* matrix has been set up. Construct the orderlist and orderfind
@@ -780,24 +744,24 @@ static void init_minorder() {
 	}
 }
 
-static void increase_order(row) unsigned row; {
+static void increase_order(unsigned row) {
 	/* order of row increases by 1. Maintain the orderlist. */
 	Item *order;
 
 	if(!do_flag) return;
 	order = roworder[row];
-	delete(order);
+	delete_(order);
 	order->norder++;
 	insert(order);
 }
 
-static void reduce_order(row) unsigned row; {
+static void reduce_order(unsigned row) {
 	/* order of row decreases by 1. Maintain the orderlist. */
 	Item *order;
 
 	if(!do_flag) return;
 	order = roworder[row];
-	delete(order);
+	delete_(order);
 	order->norder--;
 	insert(order);
 }
@@ -818,7 +782,7 @@ static void spar_minorder() { /* Minimum ordering algorithm to determine the ord
 	check_assert();
 }
 
-static void get_next_pivot(i) unsigned i; {
+static void get_next_pivot(unsigned i) {
 	/* get varord[i], etc. from the head of the orderlist. */
 	Item *order;
 	Elm *pivot, *el;
@@ -862,7 +826,7 @@ static void get_next_pivot(i) unsigned i; {
 	printf("\n");
 }
 #endif
-	delete(order);
+	delete_(order);
 }
 
 /* The following routines support the concept of a list.
@@ -903,8 +867,7 @@ newlist()
 	return (List *)i;
 }
 
-static void freelist(list)	/*free the list but not the elements*/
-	List *list;
+static void freelist(List *list)	/*free the list but not the elements*/
 {
 	Item *i1, *i2;
 	for (i1 = list->next; i1 != list; i1 = i2) {
@@ -914,9 +877,7 @@ static void freelist(list)	/*free the list but not the elements*/
 	Free(list);
 }
 
-static void linkitem(item, i)	/*link i before item*/
-	Item *item;
-	Item *i;
+static void linkitem(Item *item, Item *i)	/*link i before item*/
 {
 	i->prev = item->prev;
 	i->next = item;
@@ -925,8 +886,7 @@ static void linkitem(item, i)	/*link i before item*/
 }
 
 
-static void insert(item)
-	Item *item;
+static void insert(Item *item)
 {
 	Item *i;
 
@@ -938,8 +898,7 @@ static void insert(item)
 	linkitem(i, item);
 }
 
-static void delete(item)
-	Item *item;
+static void delete_(Item *item)
 {
 		
 	item->next->prev = item->prev;
@@ -980,7 +939,7 @@ void check_assert() {
 
 	/* at this point row links are out of order for diag[i]->col
 	   and col links are out of order for diag[i]->row */
-static void re_link(i) unsigned i; {
+static void re_link(unsigned i) {
 
 	Elm *el, *dright, *dleft, *dup, *ddown, *elnext;
 	
@@ -1034,8 +993,7 @@ static void re_link(i) unsigned i; {
 	}
 }
 
-static void sparseobj2local(so)
-	SparseObj* so;
+static void sparseobj2local(SparseObj *so)
 {
 	rowst = so->rowst;
 	diag = so->diag;
@@ -1052,8 +1010,7 @@ static void sparseobj2local(so)
   r_subrow =  so->r_subrow;
 }
 
-static void local2sparseobj(so)
-	SparseObj* so;
+static void local2sparseobj(SparseObj *so)
 {
 	so->rowst = rowst;
 	so->diag = diag;
@@ -1071,9 +1028,7 @@ static void local2sparseobj(so)
 }
 
 /* copied from scopmath/ssimplic.c */
-static int check_state(base, bound, n, s, data)
-	int n, *s, base, bound;
-	double **data;
+static int check_state(int base, int bound, int n, int *s, double **data)
 {
 	int i, flag, k;
 	
@@ -1092,28 +1047,8 @@ static int check_state(base, bound, n, s, data)
 /* copied from scopmath/ssimplic.c */
 /* parameter list exactly the same as _vector_sparse */
 int
-_vector__ss_sparse(base, bound, count, jacobp, spacep, sparseobj, neqns, state,
-	       deriv, data, t, delta_t, vfun, fun, rhsp, linflag)
-     int base;			/* first instances */
-     int bound;			/* last instance + 1 */
-     int count;			/* total number of instances */
-     double *** jacobp;		/* pointer to list of jacobians */
-				/* accessed as *jacobp[element][instance] */
-     double *** spacep;		/* pointer to workpace */
-				/* accessed as *spacep[variable][instance] */
-     void ** sparseobj;		/* pointer to sparse obj for this mechanism */
-     int neqns;			/* number of state variables */
-     int state[];		/* index of state vars in data */
-     int deriv[];		/* index of derivs in data */
-     double * data[];		/* list of intance data, inst is first idx! */
-				/* accessed as data[instance][parameter] */
-     double * t;		/* pointer to time */
-     double delta_t;		/* delta t */
-     int (*vfun)();		/* function to compute jacobian entries */
-     int (*fun)();		/* function which calls _vector_getelm */
-     double *** rhsp;		/* pointer to list of right hand sides */
-				/* accessed as *rhsp[variable][instance] */
-     int linflag;		/* if != 0 then linear */
+_vector__ss_sparse(int base, int bound, int count, double ***jacobp, double ***spacep, void ***sparseobj, int neqns, int state[],
+	       int deriv[], double *data[], double *t, double delta_t, int (*vfun)(int, int), int (*fun)(int, int), double ***rhsp, int linflag)
 {
   int err, i;
   double ss_dt;

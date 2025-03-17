@@ -48,14 +48,12 @@ static char RCSid[] =
 /*								*/
 /****************************************************************/
 
+#include <math.h>
+
 double 
-revsigmoid(x, max, K, n)
-double x, max, K, n;
+revsigmoid(double x, double max, double K, double n)
 {
     double value, temp;
-#ifndef MAC
-    extern double pow();
-#endif
 
     temp = pow(K, n);
     value = (max * temp) / (temp + pow(x, n));

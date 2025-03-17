@@ -69,14 +69,11 @@ extern int DEFLT;
  *
  **************************************************************************/
 
-static int init_force();
+static int init_force(char *);
 
-double 
-force(t, filename)
-double t;
-char *filename;
+double force(double t, char* filename)
 {
-    extern double spline();
+    extern double spline(int, double *, double *, double *, double *, double);
     Spline *sp;
     extern int _modl_cleanup();
 
@@ -156,10 +153,7 @@ char *filename;
  **************************************************************************/
 
 double 
-stepforce(reset_integ, old_value, t, filename)
-double t, *old_value;
-char *filename;
-int *reset_integ;
+stepforce(int *reset_integ, double *old_value, double t, char *filename)
 {
     double lookup(), return_val;
     Spline *sp;
@@ -229,16 +223,15 @@ int *reset_integ;
  * Files accessed: filename (input)
  *-------------------------------------------------------------------------*/
 
-static int init_force(filename)
-char *filename;
+static int init_force(char *filename)
 {
-    FILE *fopen(), *pfile;
-    extern char *fgets(), *gets();
+    FILE *pfile;
+    extern char *gets();
     char tmpstr[81];
     int n, i, j = 0, jmove, error;
     float tempx, tempy;
-    extern int derivs(), abort_run();
-    Spline *newspline, *getspline();
+    extern int derivs(int, double* , double* , double* , double*), abort_run(int);
+    Spline *newspline, *getspline(char *, int);
 
     if ((pfile = fopen(filename, "r")) != NULL)
     {
@@ -333,15 +326,13 @@ char *filename;
  *-------------------------------------------------------------------------*/
 
 Spline *
-getspline(filename, ipt)
-char *filename;
-int ipt;
+getspline(char *filename, int ipt)
 {
 #if 0 && !defined(MAC)
     extern char *strcpy(), *gets();
 #endif
-    extern int abort_run();
-    extern double *makevector();
+    extern int abort_run(int);
+    extern double *makevector(int);
     Spline *newspline;
 
     /* Allocate memory for Spline structure */
@@ -350,7 +341,7 @@ int ipt;
 	abort_run(LOWMEM);
 
     newspline->next = SP0;
-    newspline->name = malloc((unsigned) strlen(filename) + 1);
+    newspline->name = (char *) malloc((unsigned) strlen(filename) + 1);
     strcpy(newspline->name, filename);
     newspline->npts = ipt;
     newspline->x = makevector(ipt);

@@ -49,14 +49,11 @@ static char RCSid[] =
 /*								*/
 /****************************************************************/
 #include <ctype.h>
+#include <string.h>
 
 double
-threshold(reset_integ, old_value, x, limit, mode)
-double x, limit, *old_value;
-int *reset_integ;
-char *mode;
+threshold(int *reset_integ, double *old_value, double x, double limit, char *mode)
 {
-    extern int strcmp();
     int i;
     double ret_val;
 

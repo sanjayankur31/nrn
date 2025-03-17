@@ -1,4 +1,5 @@
 #include <../../nrnconf.h>
+#include <math.h>
 /******************************************************************************
  *
  * File: perpulse.c
@@ -45,14 +46,9 @@ static char RCSid[] =
 /*--------------------------------------------------------------*/
 
 double 
-perpulse(reset_integ, old_value, t, lag, height, duration, delay)
-double *old_value, t, lag, height, duration, delay;
-int *reset_integ;
+perpulse(int *reset_integ, double *old_value, double t, double lag, double height, double duration, double delay)
 {
     double temp, period, value;
-#ifndef MAC
-    extern double modf();
-#endif
 
     if (t < lag)
 	value = 0.0;

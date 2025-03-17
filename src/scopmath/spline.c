@@ -46,14 +46,12 @@ static char RCSid[] =
 /*								*/
 /****************************************************************/
 
-int derivs(nbase, x, y, h, der)
-int nbase;
-double x[], y[], h[], der[];
+int derivs(int nbase, double x[], double y[], double h[], double der[])
 {
     int i, error;
     double *a, *b, *c, *d;
-    extern int tridiag(), freevector();
-    extern double *makevector();
+    extern int tridiag(int, double*, double *, double *, double *, double []), freevector(double *);
+    extern double *makevector(int);
 
     /*
      * Set up tridagonal matrix, arrays a, b, and c, and the constant vector
@@ -126,9 +124,7 @@ double x[], y[], h[], der[];
 /****************************************************************/
 
 double 
-spline(nbase, x, y, h, der, x_inter)
-int nbase;
-double x[], y[], h[], der[], x_inter;
+spline(int nbase, double x[], double y[], double h[], double der[], double x_inter)
 {
     int i;
     double factor, factor1, y_inter;
