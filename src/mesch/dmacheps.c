@@ -27,15 +27,15 @@
 
 #include	<stdio.h>
 
-double	dclean(x)
-double	x;
+double	dclean(double x)
 {
     static double	y;
     y = x;
     return y;	/* prevents optimisation */
 }
 
-int main()
+int 
+main (void)
 {
     static double	deps, deps1, dtmp;
 

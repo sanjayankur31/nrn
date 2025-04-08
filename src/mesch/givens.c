@@ -44,9 +44,8 @@ static	char	rcsid[] = "givens.c,v 1.1 1997/12/04 17:55:22 hines Exp";
 
 /* givens -- returns c,s parameters for Givens rotation to
 		eliminate y in the vector [ x y ]' */
-void	givens(x,y,c,s)
-double  x,y;
-Real	*c,*s;
+void 
+givens (double x, double y, Real *c, Real *s)
 {
 	Real	norm;
 

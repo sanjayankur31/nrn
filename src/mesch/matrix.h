@@ -179,11 +179,15 @@ extern	VEC *v_get(), *v_resize();
 extern	MAT *m_get(), *m_resize();
 extern	PERM *px_get(), *px_resize();
 extern	IVEC *iv_get(), *iv_resize();
-extern	int m_free(),v_free();
-extern  int px_free();
-extern  int iv_free();
+extern	int m_free(void *),v_free(void *);
+extern	int m_free_v(MAT *),v_free_(VEC *);
+extern  int px_free(void *);
+extern  int px_free_v(PERM *);
+extern  int iv_free(void *);
+extern  int iv_free_v(IVEC *);
 extern  BAND *bd_get(), *bd_resize();
-extern  int bd_free();
+extern  int bd_free(void *);
+extern  int bd_free_v(BAND *);
 
 #else
 
@@ -200,9 +204,12 @@ extern  BAND *bd_get(int,int,int), *bd_resize(BAND *,int,int,int);
 
 /* free (de-allocate) (band) matrices, vectors, permutations and 
    integer vectors */
-extern  int iv_free(IVEC *);
-extern	int m_free(MAT *),v_free(VEC *),px_free(PERM *);
-extern   int bd_free(BAND *);
+extern  int iv_free(void *);
+extern  int iv_free_v(IVEC *);
+extern	int m_free(void *),v_free(void *),px_free(void *);
+extern	int m_free_v(MAT *),v_free_v(VEC *),px_free_v(PERM *);
+extern   int bd_free(void *);
+extern   int bd_free_v(BAND *);
 
 #endif
 

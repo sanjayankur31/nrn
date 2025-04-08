@@ -114,10 +114,8 @@ char    *name;
 /* d_save -- save double in ".mat" file for MATLAB
 	-- saves it as a row vector
 	-- returns vector to be saved */
-double	d_save(fp,x,name)
-FILE    *fp;
-double	x;
-char    *name;
+double 
+d_save (FILE *fp, double x, char *name)
 {
 	matlab  mat;
 	Real x1 = x;

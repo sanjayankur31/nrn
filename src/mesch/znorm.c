@@ -139,8 +139,8 @@ VEC	*scale;
 
 /* zm_norm1 -- compute matrix 1-norm -- unscaled
 	-- complex version */
-double	zm_norm1(A)
-ZMAT	*A;
+double 
+zm_norm1 (ZMAT *A)
 {
     int	i, j, m, n;
     Real	maxval, sum;
@@ -164,8 +164,8 @@ ZMAT	*A;
 
 /* zm_norm_inf -- compute matrix infinity-norm -- unscaled
 	-- complex version */
-double	zm_norm_inf(A)
-ZMAT	*A;
+double 
+zm_norm_inf (ZMAT *A)
 {
     int	i, j, m, n;
     Real	maxval, sum;
@@ -188,8 +188,8 @@ ZMAT	*A;
 }
 
 /* zm_norm_frob -- compute matrix frobenius-norm -- unscaled */
-double	zm_norm_frob(A)
-ZMAT	*A;
+double 
+zm_norm_frob (ZMAT *A)
 {
     int	i, j, m, n;
     Real	sum;

@@ -1,6 +1,7 @@
 #ifndef oc_h
 #define oc_h
 
+#include <iostream>
 #include <Dispatch/iohandler.h>
 #include <Dispatch/dispatcher.h>
 #include <InterViews/session.h>
@@ -74,7 +75,7 @@ class Oc {
     static void helpmode(Window*);
     static void help(const char*);
 
-    static ostream* save_stream;
+    static std::ostream* save_stream;
     static void cleanup();
 
   private:

@@ -314,7 +314,8 @@ void massagekinetic(Item* q1, Item* q2, Item* q3, Item* q4, int sensused) /*KINE
     numlist++;
     fun->u.i = numlist;
 
-    Sprintf(buf, "static int %s();\n", SYM(q2)->name);
+    Sprintf(buf, "static int %s (void* _so, double* _rhs, double* _p, Datum* _ppvar, Datum* _thread, NrnThread* _nt);\n" , SYM(q2)->name);
+
     Linsertstr(procfunc, buf);
     replacstr(q1, "\nstatic int");
     qv = insertstr(q3, "()\n");

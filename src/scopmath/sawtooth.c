@@ -50,16 +50,12 @@ static char RCSid[] =
 /*								*/
 /****************************************************************/
 
+#include <math.h>
+
 double 
-sawtooth(reset_integ, old_value, t, period, amplitude)
-double t, period, amplitude, *old_value;
-int *reset_integ;
+sawtooth(int *reset_integ, double *old_value, double t, double period, double amplitude)
 {
     double value;
-#ifndef MAC
-    extern double modf();
-#endif
-
     value = amplitude * modf(t / period, &value);
 
     if (value != *old_value) *reset_integ = 1;

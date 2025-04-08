@@ -65,7 +65,7 @@ setup_solver = nrn_dll_sym("setup_solver")
 setup_solver.argtypes = [
     ndpointer(ctypes.c_double),
     ctypes.c_int,
-    numpy.ctypeslib.ndpointer(numpy.int_, flags="contiguous"),
+    numpy.ctypeslib.ndpointer(ctypes.c_long, flags="contiguous"),
     ctypes.c_int,
 ]
 
@@ -500,10 +500,13 @@ def _find_librxdmath():
     base_path = os.path.join(h.neuronhome(), "..", "..", platform.machine())
     if not os.path.exists(base_path):
         base_path = os.path.join(h.neuronhome(), "..", "..")
-    base_path = os.path.join(base_path, "lib", "librxdmath")
-    success = False
-    for extension in ["", ".dll", ".so", ".dylib"]:
-        dll = base_path + extension
+    if platform.architecture()[0] == "64bit":
+        base_path = os.path.join(base_path, "lib64", "librxdmath")
+    else:
+        base_path = os.path.join(base_path, "lib", "librxdmath")
+    success = False 
+    for extension in ['', '.dll', '.so', '.dylib']:
+        dll = base_path  + extension
         try:
             success = os.path.exists(dll)
         except:
@@ -655,8 +658,8 @@ def _matrix_to_rxd_sparse(m):
     return (
         n,
         len(nonzero_i),
-        numpy.ascontiguousarray(nonzero_i, dtype=numpy.int_),
-        numpy.ascontiguousarray(nonzero_j, dtype=numpy.int_),
+        numpy.ascontiguousarray(nonzero_i, dtype=ctypes.c_long),
+        numpy.ascontiguousarray(nonzero_j, dtype=ctypes.c_long),
         nonzero_values,
     )
 
@@ -674,7 +677,7 @@ def _setup_matrices():
         n = len(_node_get_states())
 
         volumes = node._get_data()[0]
-        zero_volume_indices = (numpy.where(volumes == 0)[0]).astype(numpy.int_)
+        zero_volume_indices = (numpy.where(volumes == 0)[0]).astype(ctypes.c_long)
         if species._has_1d:
             # TODO: initialization is slow. track down why
 
@@ -1871,7 +1874,7 @@ def _init():
     _setup_matrices()
     # if species._has_1d and species._1d_submatrix_n():
     # volumes = node._get_data()[0]
-    # zero_volume_indices = (numpy.where(volumes == 0)[0]).astype(numpy.int_)
+    # zero_volume_indices = (numpy.where(volumes == 0)[0]).astype(ctypes.c_long)
     # setup_solver(_node_get_states(), len(_node_get_states()), zero_volume_indices, len(zero_volume_indices), h._ref_t, h._ref_dt)
     clear_rates()
     _setup_memb_currents()

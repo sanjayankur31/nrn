@@ -47,15 +47,12 @@ static char RCSid[] =
 /*								*/
 /****************************************************************/
 
+#include <math.h>
+
 double 
-squarewave(reset_integ, old_value, t, period, amplitude)
-double *old_value, t, period, amplitude;
-int *reset_integ;
+squarewave(int *reset_integ, double *old_value, double t, double period, double amplitude)
 {
     double temp, value;
-#ifndef MAC
-    extern double modf();
-#endif
 
     temp = modf(t / period, &temp);
     if (temp < 0.5)

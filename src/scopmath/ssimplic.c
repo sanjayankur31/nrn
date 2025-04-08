@@ -3,16 +3,13 @@
 #define s_(arg)	p[s[arg]]
 
 extern void _modl_set_dt(double);
-extern int _advance();
-extern int sparse();
-extern int derivimplicit();
+extern int _advance(int, int, int [], int [], double *, double *, double, int (*)(), double ***, int);
+extern int sparse(void **, int , int *, int *, double *, double *, double , int (*)(), double **, int );
+extern int derivimplicit(int , int , int *, int * , double *, double *, double , int(*)(), double **);
 
-static int check_state();
+static int check_state(int, int *, double *);
 
-int _ss__advance(_ninits, n, s, d, p, t, dt, fun, pcoef, linflag)
-	int n, _ninits, linflag;
-	int (*fun) ();
-	double *t, dt, *p, ***pcoef; int s[]; int d[];
+int _ss__advance(int _ninits, int n, int s[], int d[], double *p, double *t, double dt, int (*fun)(), double ***pcoef, int linflag)
 {
 	int err, i;
 	double ss_dt;
@@ -44,12 +41,7 @@ if (linflag) { /*iterate linear solution*/
 }
 
 int
-_ss_sparse(v, n, s, d, p, t, dt, fun, pcoef, linflag)
-	void** v;
-        int n, linflag;
-        int (*fun)();
-        double *t, dt, **pcoef, *p;
-        int *s, *d;   
+_ss_sparse(void **v, int n, int *s, int *d, double *p, double *t, double dt, int (*fun)(), double **pcoef, int linflag)
 {
 	int err, i;
 	double ss_dt;
@@ -81,11 +73,7 @@ if (linflag) { /*iterate linear solution*/
 }
 
 int
-_ss_derivimplicit(_ninits, n, slist, dlist, p, pt, dt, fun, ptemp)
-	int n, _ninits;
-	double *p, *pt, dt, **ptemp;
-	int *slist, *dlist;
-	int (*fun)();
+_ss_derivimplicit(int _ninits, int n, int* slist, int *dlist, double *p, double *pt, double dt, int (*fun)(), double **ptemp)
 {
 	int err, i;
 	double ss_dt;
@@ -100,9 +88,7 @@ _ss_derivimplicit(_ninits, n, slist, dlist, p, pt, dt, fun, ptemp)
 }
 
 static int
-check_state(n, s, p)
-	int n, *s;
-	double *p;
+check_state(int n, int *s, double *p)
 {
 	int i, flag;
 	

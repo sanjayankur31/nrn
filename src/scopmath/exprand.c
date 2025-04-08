@@ -1,4 +1,5 @@
 #include <../../nrnconf.h>
+#include <math.h>
 /******************************************************************************
  *
  * File: exprand.c
@@ -35,10 +36,9 @@ static char RCSid[] =
 /*								*/
 /****************************************************************/
 
-double 
-exprand(double mean)
+double exprand(double mean)
 {
-    extern double scop_random(), log();
+    extern double scop_random();
 
     return (-mean*log(scop_random()));
 }

@@ -58,9 +58,9 @@ int	cg_num_iters;
 
 /* matrix-as-routine type definition */
 /* #ifdef ANSI_C */
-/* typedef VEC	*(*MTX_FN)(void *params, VEC *x, VEC *out); */
+ typedef VEC	*(*MTX_FN)(void *params, VEC *x, VEC *out);
 /* #else */
-typedef VEC	*(*MTX_FN)();
+/*typedef VEC	*(*MTX_FN)();*/
 /* #endif */
 #ifdef ANSI_C
 VEC	*spCHsolve(SPMAT *,VEC *,VEC *);
@@ -71,8 +71,8 @@ VEC	*spCHsolve();
 /* cg_set_maxiter -- sets maximum number of iterations if numiter > 1
 	-- just returns current max_iter otherwise
 	-- returns old maximum */
-int	cg_set_maxiter(numiter)
-int	numiter;
+int 
+cg_set_maxiter (int numiter)
 {
 	int	temp;
 

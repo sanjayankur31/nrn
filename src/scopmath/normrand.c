@@ -1,4 +1,5 @@
 #include <../../nrnconf.h>
+#include <math.h>
 /******************************************************************************
  *
  * File: normrand.c
@@ -38,11 +39,10 @@ static char RCSid[] =
 /*--------------------------------------------------------------*/
 
 double 
-normrand(mean, std_dev)
-double mean, std_dev;
+normrand(double mean, double std_dev)
 {
     double s, v1, v2;
-    extern double sqrt(), log(), scop_random();
+    extern double scop_random();
 
     s = 1.0;
     while (s >= 1.0)

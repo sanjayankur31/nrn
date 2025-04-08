@@ -47,12 +47,10 @@ static char RCSid[] =
 #include <stdlib.h>
 #include "errcodes.h"
 
-int invert(n, matrix)
-int n;
-double *matrix[];
+int invert(int n, double *matrix[])
 {
-    extern int freematrix();
-    extern double **makematrix();
+    extern int freematrix(double **);
+    extern double **makematrix(int, int);
     int ipivot, isave=0, jrow, krow, kcol, i, j, *perm;
     double **soln;
 

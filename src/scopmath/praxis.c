@@ -4,17 +4,6 @@
 #include <math.h>
 #undef small
 
-extern int stoprun;
-extern void hoc_execerror(const char*, const char*);
-extern void hoc_after_prax_quad(char*);
-
-static int minfit_(), min_(), sort_(), quad_();
-static int vcprnt_(), print_(), maprnt_();
-static double random_(), flin_();
-
-/* modified for re-entrancy by Hines 5/20/98 */
-extern char* hoc_Ecalloc();
-
 /*  -- translated by f2c (version of 23 May 1992  14:18:33).
    You must link the resulting object file with the libraries:
 	-lF77 -lI77 -lm -lc   (in that order)
@@ -34,6 +23,23 @@ typedef long int logical;
 #define dmin(arg1,arg2) ((arg1 < arg2) ? arg1 : arg2)
 #endif
 
+extern int stoprun;
+extern void hoc_execerror(const char*, const char*);
+extern void hoc_after_prax_quad(char*);
+
+static int minfit_(integer *, integer *, doublereal *, doublereal *, doublereal *, doublereal *, doublereal *);
+static int min_(integer *, integer *, integer *, doublereal *, doublereal *, doublereal *, logical *, doublereal (*) (doublereal *, integer), doublereal *, doublereal *, doublereal *, doublereal *);
+static int sort_(integer *, integer *, doublereal *, doublereal *);
+static int quad_(integer *, doublereal (*) (doublereal *, integer), doublereal *, doublereal *, doublereal *, doublereal *);
+static int vcprnt_(integer *, doublereal *, integer *);
+static int print_(integer *, doublereal *, integer *, doublereal *);
+static int maprnt_(integer *, doublereal *, integer *, integer *);
+static double random_(integer *);
+static double flin_(integer *, integer *, doublereal *, doublereal (*)(doublereal *, integer), doublereal *, integer *, doublereal *);
+
+/* modified for re-entrancy by Hines 5/20/98 */
+extern char* hoc_Ecalloc(int, int);
+
 /* Common Block Declarations */
 
 struct GlobalStruct{
@@ -41,13 +47,13 @@ struct GlobalStruct{
     integer nf, nl;
     doublereal *minfit_e, *flin_t;
 } *global_;
-static struct GlobalStruct* gstruct_alloc(sz) int sz; {
+static struct GlobalStruct* gstruct_alloc(int sz) {
 	struct GlobalStruct* gs = (struct GlobalStruct*)hoc_Ecalloc(1, sizeof(struct GlobalStruct));
 	gs->minfit_e = (doublereal*)hoc_Ecalloc(sz, sizeof(doublereal));
 	gs->flin_t = (doublereal*)hoc_Ecalloc(sz, sizeof(doublereal));
 	return gs;
 }
-static void gstruct_free(gs) struct GlobalStruct* gs; {
+static void gstruct_free(struct GlobalStruct *gs) {
 	if (gs) {
 		free(gs->minfit_e);
 		free(gs->flin_t);
@@ -62,7 +68,8 @@ struct QStruct{
 	    qd1, qf1;
     integer size;
 } *q_, *q_hoc;
-static struct QStruct* qstruct_alloc(sz) int sz; {
+static struct QStruct* qstruct_alloc(int sz) 
+{
 	struct QStruct* qs = (struct QStruct*)hoc_Ecalloc(1, sizeof(struct QStruct));
 	qs->size = sz;
 	qs->v = (doublereal*)hoc_Ecalloc(sz*sz, sizeof(doublereal));
@@ -70,7 +77,7 @@ static struct QStruct* qstruct_alloc(sz) int sz; {
 	qs->q1 = (doublereal*)hoc_Ecalloc(sz, sizeof(doublereal));
 	return qs;
 }
-static void qstruct_free(qs) struct QStruct* qs; {
+static void qstruct_free(struct QStruct *qs) {
 	if (qs) {
 		free(qs->v);
 		free(qs->q0);
@@ -109,7 +116,7 @@ double* praxis_paxis(int i) {
 	return (double*)0;
 }
 
-int praxis_stop(i) int i; {
+int praxis_stop(int i) {
 	int j = praxstep;
 	praxstep = i;
 	return j;
@@ -124,13 +131,7 @@ static integer c__10 = 10;
 static integer c__4 = 4;
 static integer c__3 = 3;
 
-doublereal praxis(t0, machep, h0, nval, prin, x, f, fmin, after_quad)
-doublereal *t0, *machep, *h0;
-integer nval, *prin;
-doublereal *x;
-doublereal (*f) ();
-doublereal *fmin;
-char* after_quad; /* hoc statement */
+doublereal praxis(doublereal *t0, doublereal *machep, doublereal *h0, integer nval, integer *prin, doublereal *x, doublereal (*f) (doublereal *, integer), doublereal *fmin, char *after_quad)
 {
 
 	integer *n, nval1;
@@ -138,35 +139,32 @@ char* after_quad; /* hoc statement */
     integer i__1, i__2, i__3;
     doublereal ret_val, d__1;
 
-    /* Builtin functions */
-    integer pow_ii();
-
     /* Local variables */
     doublereal scbd;
     integer idim;
     logical illc;
-    extern /* Subroutine */ int quad_();
+    extern /* Subroutine */ int quad_(integer *, doublereal (*) (doublereal *, integer), doublereal *, doublereal *, doublereal *, doublereal *);
     integer klmk;
-    extern /* Subroutine */ int sort_();
+    extern /* Subroutine */ int sort_(integer *, integer *, doublereal *, doublereal *);
     doublereal h, ldfac;
     integer i, j, k;
     doublereal s, t, *y, large, *z, small, value, f1;
     integer sz, sz1;
-    extern /* Subroutine */ int print_();
+    extern /* Subroutine */ int print_(integer *, doublereal *, integer *, doublereal *);
     integer k2;
     doublereal m2, m4, t2, df, dn;
     integer kl, ii;
     doublereal sf;
     integer kt;
     doublereal sl, vlarge;
-    extern doublereal random_();
-    extern /* Subroutine */ int minfit_();
+    extern doublereal random_(integer *);
+    extern /* Subroutine */ int minfit_(integer *, integer *, doublereal *, doublereal *, doublereal *, doublereal *, doublereal *);
     doublereal vsmall;
-    extern /* Subroutine */ int maprnt_();
+    extern /* Subroutine */ int maprnt_(integer *, doublereal *, integer *, integer *);
     integer km1, im1;
-    extern /* Subroutine */ int vcprnt_();
+    extern /* Subroutine */ int vcprnt_(integer *, doublereal *, integer *);
     doublereal dni, lds;
-    extern /* Subroutine */ int min_();
+    extern /* Subroutine */ int min_(integer *, integer *, integer *, doublereal *, doublereal *, doublereal *, logical *, doublereal (*) (doublereal *, integer), doublereal *, doublereal *, doublereal *, doublereal *);
     integer ktm;
 
 /* for re-entrancy*/
@@ -780,9 +778,7 @@ ret_:
 
 #undef d
 
-static /* Subroutine */ int minfit_(m, n, machep, tol, ab, q, e)
-integer *m, *n;
-doublereal *machep, *tol, *ab, *q, *e;
+static /* Subroutine */ int minfit_(integer *m, integer *n, doublereal *machep, doublereal *tol, doublereal *ab, doublereal *q, doublereal *e)
 {
     /* System generated locals */
     integer ab_dim1, ab_offset, i__1, i__2, i__3;
@@ -1166,12 +1162,7 @@ L200:
     return 0;
 } /* minfit_ */
 
-static /* Subroutine */ int min_(n, j, nits, d2, x1, f1, fk, f, x, t, machep, h)
-integer *n, *j, *nits;
-doublereal *d2, *x1, *f1;
-logical *fk;
-doublereal (*f) ();
-doublereal *x, *t, *machep, *h;
+static /* Subroutine */ int min_(integer *n, integer *j, integer *nits, doublereal *d2, doublereal *x1, doublereal *f1, logical *fk, doublereal (*f) (doublereal *, integer), doublereal *x, doublereal *t, doublereal *machep, doublereal *h)
 {
     /* System generated locals */
     integer i__1;
@@ -1180,7 +1171,7 @@ doublereal *x, *t, *machep, *h;
     /* Builtin functions */
 
     /* Local variables */
-    extern doublereal flin_();
+    extern doublereal flin_(integer *, integer *, doublereal *, doublereal (*)(doublereal *, integer), doublereal *, integer *, doublereal *);
     doublereal temp;
     integer i, k;
     integer sz, sz1;
@@ -1375,13 +1366,7 @@ L17:
     return 0;
 } /* min_ */
 
-static doublereal flin_(n, j, l, f, x, nf, t)
-integer *n, *j;
-doublereal *l;
-doublereal (*f) ();
-doublereal *x;
-integer *nf;
-doublereal *t;
+static doublereal flin_(integer *n, integer *j, doublereal *l, doublereal (*f)(doublereal *, integer), doublereal *x, integer *nf, doublereal *t)
 {
 
     /* System generated locals */
@@ -1427,9 +1412,7 @@ L4:
     return ret_val;
 } /* flin_ */
 
-static /* Subroutine */ int sort_(m, n, d, v)
-integer *m, *n;
-doublereal *d, *v;
+static /* Subroutine */ int sort_(integer *m, integer *n, doublereal *d, doublereal *v)
 {
     /* System generated locals */
     integer v_dim1, v_offset, i__1, i__2;
@@ -1485,11 +1468,7 @@ L3:
     }
     return 0;
 } /* sort_ */
-
-static /* Subroutine */ int quad_(n, f, x, t, machep, h)
-integer *n;
-doublereal (*f) ();
-doublereal *x, *t, *machep, *h;
+static /* Subroutine */ int quad_(integer *n, doublereal (*f) (doublereal *, integer), doublereal *x, doublereal *t, doublereal *machep, doublereal *h)
 {
     /* System generated locals */
     integer i__1;
@@ -1500,7 +1479,7 @@ doublereal *x, *t, *machep, *h;
     /* Local variables */
     integer i;
     doublereal l, s, value;
-    extern /* Subroutine */ int min_();
+    extern /* Subroutine */ int min_(integer *, integer *, integer *, doublereal *, doublereal *, doublereal *, logical *, doublereal (*) (doublereal* , integer), doublereal *, doublereal *, doublereal *, doublereal *);
 
 /* ...QUAD LOOKS FOR THE MINIMUM OF F ALONG A CURVE DEFINED BY Q0,Q1,X... 
 */
@@ -1553,10 +1532,7 @@ L3:
     return 0;
 } /* quad_ */
 
-static /* Subroutine */ int vcprnt_(option, v, n)
-integer *option;
-doublereal *v;
-integer *n;
+static /* Subroutine */ int vcprnt_(integer *option, doublereal *v, integer *n)
 {
     /* System generated locals */
     integer i__1;
@@ -1605,11 +1581,7 @@ L4:
     return 0;
 } /* vcprnt_ */
 
-static /* Subroutine */ int print_(n, x, prin, fmin)
-integer *n;
-doublereal *x;
-integer *prin;
-doublereal *fmin;
+static /* Subroutine */ int print_(integer *n, doublereal *x, integer *prin, doublereal *fmin)
 {
     /* System generated locals */
     integer i__1;
@@ -1656,10 +1628,7 @@ L2:
     return 0;
 } /* print_ */
 
-static /* Subroutine */ int maprnt_(option, v, m, n)
-integer *option;
-doublereal *v;
-integer *m, *n;
+static /* Subroutine */ int maprnt_(integer *option, doublereal *v, integer *m, integer *n)
 {
 
     /* System generated locals */
@@ -1712,10 +1681,10 @@ L3:
 } /* maprnt_ */
 
 #include <../oc/mcran4.h>
+#include <stdint.h>
 uint32_t nrn_praxis_ran_index;
 
-static doublereal random_(naught)
-integer *naught;
+static doublereal random_(integer *naught)
 {
 	double x;
 	return mcell_ran4(&nrn_praxis_ran_index, &x, 1, 1.);

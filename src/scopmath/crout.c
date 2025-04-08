@@ -52,12 +52,10 @@ static char RCSid[] =
 #include <math.h>
 #include "errcodes.h"
 
-int crout(n, a, perm)
-int n, perm[];
-double *a[];
+int crout(int n, double *a[], int perm[])
 {
-    extern int freevector();
-    extern double *makevector();
+    extern int freevector(double *);
+    extern double *makevector(int);
     int i, j, k, r, pivot, irow, save_i=0, krow;
     double sum, *rowmax, equil_1, equil_2;
 

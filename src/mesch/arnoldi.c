@@ -38,7 +38,7 @@ static char rcsid[] = "arnoldi.c,v 1.1 1997/12/04 17:55:13 hines Exp";
 
 /* arnoldi -- an implementation of the Arnoldi method */
 MAT	*arnoldi(A,A_param,x0,m,h_rem,Q,H)
-VEC	*(*A)();
+VEC	*(*A)(void *, VEC *, VEC *);
 void	*A_param;
 VEC	*x0;
 int	m;
@@ -119,7 +119,7 @@ MAT	*Q, *H;
 		SIAM J. Sci. Stat. Comp. v.7, pp.856--869 (1986)
 	-- y is overwritten with the solution */
 VEC	*gmres(A,A_param,m,Q,R,b,tol,x)
-VEC	*(*A)();
+VEC	*(*A)(void*, VEC*, VEC*);
 void	*A_param;
 VEC	*b, *x;
 int	m;

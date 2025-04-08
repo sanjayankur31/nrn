@@ -133,7 +133,7 @@ static void bksub(SparseObj* so);
 static void prmat(SparseObj* so);
 static void initeqn(SparseObj* so, unsigned maxeqn);
 static void free_elm(SparseObj* so);
-static Elm* getelm(SparseObj* so,unsigned row, unsigned col, Elm* new);
+static Elm* getelm(SparseObj* so,unsigned row, unsigned col, Elm* new_);
 double* _nrn_thread_getelm(SparseObj* so, int row, int col);
 static void create_coef_list(SparseObj* so, int n, FUN fun, double* p, void* ppvar, void* thread, void* nt);
 static void init_coef_list(SparseObj* so);
@@ -147,10 +147,10 @@ static List* newlist();
 static void freelist(List* list);
 static void linkitem(Item* item, Item* i);
 static void insert(SparseObj* so, Item* item);
-static void delete(Item* item);
+static void delete_(Item* item);
 static void *emalloc(unsigned n);
 static void myfree(void*);
-static void check_assert();
+static void check_assert(SparseObj *);
 static void re_link(SparseObj* so, unsigned i);
 static SparseObj* create_sparseobj();
 void _nrn_destroy_sparseobj_thread(SparseObj* so);
@@ -160,16 +160,10 @@ create_coef_list makes a list for fast setup, does minimum ordering and
 ensures all elements needed are present */
 /* this could easily be made recursive but it isn't right now */
 
-int sparse_thread(v, n, s, d, p, t, dt, fun, linflag, ppvar, thread, nt)
-	void** v;
-	int n, linflag;  /* linflag was not explicitly declared */
-	FUN fun;
-	double *t, dt, *p;
-	int *s, *d;
-	void* ppvar; void* thread; void* nt;
+int sparse_thread(void **v, int n, int *s, int *d, double *p, double *t, double dt, FUN fun, int linflag, void *ppvar, void *thread, void *nt)
+{
 #define s_(arg) p[s[arg]]
 #define d_(arg) p[d[arg]]
-{
 	int i, j, ierr;
 	double err;
 	SparseObj* so;
@@ -213,16 +207,10 @@ if (!linflag && s_(i-1) < 0.) { s_(i-1) = 0.; }
 }
 
 /* for solving ax=b */
-int _cvode_sparse_thread(v, n, x, p, fun, ppvar, thread, nt)
-	void** v;
-	int n;
-	FUN fun;
-	double *p;
-	int *x;
-	void* ppvar; void* thread; void* nt;
-#define x_(arg) p[x[arg]]
+int _cvode_sparse_thread(void **v, int n, int *x, double *p, FUN fun, void *ppvar, void *thread, void *nt)
 {
-	int i, j, ierr;
+#define x_(arg) p[x[arg]]
+	int i, ierr;
 	SparseObj* so;
 	
 	so = (SparseObj*)(*v);
@@ -246,7 +234,7 @@ int _cvode_sparse_thread(v, n, x, p, fun, ppvar, thread, nt)
 }
 
 static int matsol(SparseObj* so) {
-	register Elm *pivot, *el;
+	Elm *pivot, *el;
 	unsigned i;
 
 	/* Upper triangularization */
@@ -270,7 +258,7 @@ static int matsol(SparseObj* so) {
 
 static void subrow(SparseObj* so, Elm* pivot, Elm* rowsub) {
 	double r;
-	register Elm *el;
+	Elm *el;
 
 	r = rowsub->value / pivot->value;
 	so->rhs[rowsub->row] -= so->rhs[pivot->row] * r;
@@ -330,7 +318,7 @@ static void prmat(SparseObj* so) {
 
 static void initeqn(SparseObj* so, unsigned maxeqn)	/* reallocate space for matrix */
 {
-	register unsigned i;
+	unsigned i;
 
 	if (maxeqn == so->neqn) return;
 	free_elm(so);
@@ -384,10 +372,10 @@ The biggest difference is that elements are no longer removed and this
 saves much time allocating and freeing during the solve phase
 */
 
-static Elm* getelm(SparseObj* so, unsigned row, unsigned col, Elm* new)
+static Elm* getelm(SparseObj* so, unsigned row, unsigned col, Elm* new_)
    /* return pointer to row col element maintaining order in rows */
 {
-	register Elm *el, *elnext;
+	Elm *el, *elnext;
 	unsigned vrow, vcol;
 	
 	vrow = so->varord[row];
@@ -409,16 +397,16 @@ static Elm* getelm(SparseObj* so, unsigned row, unsigned col, Elm* new)
 			}
 		}
 		/* insert below el */
-		if (!new) {
-			new = (Elm *)nrn_pool_alloc(so->elmpool);
-			new->value = 0.;
+		if (!new_) {
+			new_ = (Elm *)nrn_pool_alloc(so->elmpool);
+			new_->value = 0.;
 			increase_order(so, row);
 		}
-		new->r_down = el->r_down;
-		el->r_down = new;
-		new->r_up = el;
-		if (new->r_down) {
-			new->r_down->r_up = new;
+		new_->r_down = el->r_down;
+		el->r_down = new_;
+		new_->r_up = el;
+		if (new_->r_down) {
+			new_->r_down->r_up = new_;
 		}
 		/* search leftward from diag[vrow] */
 		for (el=so->diag[vrow]; ; el = elnext) {
@@ -430,13 +418,13 @@ static Elm* getelm(SparseObj* so, unsigned row, unsigned col, Elm* new)
 			}
 		}
 		/* insert to left of el */
-		new->c_left = el->c_left;
-		el->c_left = new;
-		new->c_right = el;
-		if (new->c_left) {
-			new->c_left->c_right = new;
+		new_->c_left = el->c_left;
+		el->c_left = new_;
+		new_->c_right = el;
+		if (new_->c_left) {
+			new_->c_left->c_right = new_;
 		}else{
-			so->rowst[vrow] = new;
+			so->rowst[vrow] = new_;
 		}
 	} else { /* in the upper triangle */
 		/* search upward from diag[vcol] */
@@ -451,16 +439,16 @@ static Elm* getelm(SparseObj* so, unsigned row, unsigned col, Elm* new)
 			}
 		}
 		/* insert above el */
-		if (!new) {
-			new = (Elm *)nrn_pool_alloc(so->elmpool);
-			new->value = 0.;
+		if (!new_) {
+			new_ = (Elm *)nrn_pool_alloc(so->elmpool);
+			new_->value = 0.;
 			increase_order(so, row);
 		}
-		new->r_up = el->r_up;
-		el->r_up = new;
-		new->r_down = el;
-		if (new->r_up) {
-			new->r_up->r_down = new;
+		new_->r_up = el->r_up;
+		el->r_up = new_;
+		new_->r_down = el;
+		if (new_->r_up) {
+			new_->r_up->r_down = new_;
 		}
 		/* search right from diag[vrow] */
 		for (el=so->diag[vrow]; ; el = elnext) {
@@ -472,16 +460,16 @@ static Elm* getelm(SparseObj* so, unsigned row, unsigned col, Elm* new)
 			}
 		}
 		/* insert to right of el */
-		new->c_right = el->c_right;
-		el->c_right = new;
-		new->c_left = el;
-		if (new->c_right) {
-			new->c_right->c_left = new;
+		new_->c_right = el->c_right;
+		el->c_right = new_;
+		new_->c_left = el;
+		if (new_->c_right) {
+			new_->c_right->c_left = new_;
 		}
 	}
-	new->row = row;
-	new->col = col;
-	return new;
+	new_->row = row;
+	new_->col = col;
+	return new_;
 }
 
 double* _nrn_thread_getelm(SparseObj* so, int row, int col) {
@@ -537,7 +525,7 @@ static void init_minorder(SparseObj* so) {
 	
 	so->do_flag = 1;
 	if (so->roworder) {
-		for (i=1; i <= so->nroworder; ++i) {
+		for (i=1; i <= (unsigned) so->nroworder; ++i) {
 			Free(so->roworder[i]);
 		}
 		Free(so->roworder);
@@ -565,7 +553,7 @@ static void increase_order(SparseObj* so, unsigned row) {
 
 	if(!so->do_flag) return;
 	order = so->roworder[row];
-	delete(order);
+	delete_(order);
 	order->norder++;
 	insert(so, order);
 }
@@ -576,7 +564,7 @@ static void reduce_order(SparseObj* so, unsigned row) {
 
 	if(!so->do_flag) return;
 	order = so->roworder[row];
-	delete(order);
+	delete_(order);
 	order->norder--;
 	insert(so, order);
 }
@@ -641,7 +629,7 @@ static void get_next_pivot(SparseObj* so, unsigned i) {
 	printf("\n");
 }
 #endif
-	delete(order);
+	delete_(order);
 }
 
 /* The following routines support the concept of a list.
@@ -708,7 +696,7 @@ static void insert(SparseObj* so, Item* item) {
 	linkitem(i, item);
 }
 
-static void delete(Item* item) {
+static void delete_(Item* item) {
 	item->next->prev = item->prev;
 	item->prev->next = item->next;
 	item->prev = ITEM0;
@@ -821,7 +809,7 @@ static SparseObj* create_sparseobj() {
 
 	SparseObj* so;
 
-	so = emalloc(sizeof(SparseObj));
+	so = (SparseObj *) emalloc(sizeof(SparseObj));
 	nrn_malloc_lock();
 	so->elmpool = nrn_pool_create(100, sizeof(Elm));
 	nrn_malloc_unlock();

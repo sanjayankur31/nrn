@@ -65,14 +65,12 @@ static char RCSid[] =
 #include "errcodes.h"
 #include "scoplib.h"
 
-int expfit(terms, reffile, amplitude, lambda, error)
-char *reffile;
-double *terms, amplitude[], lambda[], *error;
+int expfit(double *terms, char *reffile, double amplitude[], double lambda[], double *error)
 {
-    int i, j, k, npts, dimen, ierr, expinit(), testfit();
+    int i, j, k, npts, dimen, ierr, expinit(char *, double *, double **), testfit(int , double [], double *, double [], double [], double , double *);
     double h, *x, **L, *coeff, *work;
-    extern int simeq(), deflate(), freematrix(), freevector();
-	extern double *makevector(), **makematrix();
+    extern int simeq(int, double **, double *, int *), deflate(double , double *, double []), freematrix(double **), freevector(double *);
+	extern double *makevector(int), **makematrix(int, int);
 
     /*
      * Read in data file; expinit() returns number of data points
@@ -214,15 +212,13 @@ FINISH:
  * Files accessed: filename (input)
  *------------------------------------------------------------------------*/
 
-int expinit(filename, deltat, data)
-char *filename;
-double *deltat, **data;
+int expinit(char *filename, double *deltat, double **data)
 {
-    FILE *refdata, *fopen();
-    int i, npts = -6, fclose();
-    extern double *makevector();
+    FILE *refdata;
+    int i, npts = -6;
+    extern double *makevector(int);
     double temp;
-    char *fgets(), tmpstr[81];
+    char tmpstr[81];
 
     /*
      * Open reference data file.  Count data points and allocate storage for
@@ -282,9 +278,7 @@ double *deltat, **data;
  * Files accessed:
  *------------------------------------------------------------------------*/
 
-int testfit(ndata, data, terms, amplitude, lambda, h, errfit)
-int ndata;
-double *terms, data[], amplitude[], lambda[], h, *errfit;
+int testfit(int ndata, double data[], double *terms, double amplitude[], double lambda[], double h, double *errfit)
 {
     int n, i, j;
     double temp;

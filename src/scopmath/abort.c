@@ -32,17 +32,14 @@ static char RCSid[] =
  *---------------------------------------------------------------------------*/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <setjmp.h>
 #include "errcodes.h"
 
 extern void hoc_execerror(const char*, const char*);
 
-int abort_run(code)
-int code;
+int abort_run(int code)
 {
-#ifndef MAC
-    extern int abs();
-#endif
 	extern int _modl_cleanup();
 #if HOC == 0
     extern jmp_buf ibuf;

@@ -381,15 +381,10 @@ set(SPARSE13_FILES_LIST
 # scopmath sources
 set(SCOPMATH_FILES_LIST
     abort.c
-    adams.c
-    adeuler.c
-    adrunge.c
     advance.c
     boundary.c
     crank.c
     crout.c
-    csoda.c
-    csodabnc.c
     deflate.c
     dimplic.c
     scoperf.c
@@ -400,10 +395,8 @@ set(SCOPMATH_FILES_LIST
     factoria.c
     force.c
     gauss.c
-    gear.c
     getmem.c
     harmonic.c
-    heun.c
     hyperbol.c
     invert.c
     lag.c
@@ -425,10 +418,8 @@ set(SCOPMATH_FILES_LIST
     runge.c
     sawtooth.c
     schedule.c
-    seidel.c
     sigmoid.c
     simeq.c
-    simplex.c
     sparse.c
     vsparse.c
     spline.c

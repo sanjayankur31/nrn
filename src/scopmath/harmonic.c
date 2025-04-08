@@ -1,4 +1,5 @@
 #include <../../nrnconf.h>
+#include <math.h>
 /******************************************************************************
  *
  * File: harmonic.c
@@ -48,11 +49,9 @@ static char RCSid[] =
 #define TWO_PI 6.2831853
 
 double 
-harmonic(t, period, amplitude, offset)
-double t, period, amplitude, offset;
+harmonic(double t, double period, double amplitude, double offset)
 {
     double value;
-    extern double sin();
 
     value = amplitude * sin(TWO_PI / period * (t + offset));
     return (value);

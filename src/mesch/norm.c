@@ -62,13 +62,13 @@ VEC	*x, *scale;
 }
 
 /* square -- returns x^2 */
-double	square(x)
-double	x;
+double 
+square (double x)
 {	return x*x;	}
 
 /* cube -- returns x^3 */
-double cube(x)
-double x;
+double 
+cube (double x)
 {  return x*x*x;   }
 
 /* _v_norm2 -- computes (scaled) 2-norm (Euclidean norm) of vectors */

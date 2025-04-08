@@ -168,9 +168,8 @@ double mrand()
 }
 
 /* mrandlist -- fills the array a[] with len random numbers */
-void	mrandlist(a, len)
-Real	a[];
-int	len;
+void 
+mrandlist (Real a[], int len)
 {
     int		i;
     long	lval;
@@ -195,8 +194,8 @@ int	len;
 
 
 /* smrand -- set seed for mrand() */
-void smrand(seed)
-int	seed;
+void 
+smrand (int seed)
 {
     int		i;
 

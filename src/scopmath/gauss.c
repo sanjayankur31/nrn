@@ -1,4 +1,5 @@
 #include <../../nrnconf.h>
+#include <math.h>
 /******************************************************************************
  *
  * File: gauss.c
@@ -41,16 +42,11 @@ static char RCSid[] =
 /*								*/
 /****************************************************************/
 
-double 
-gauss(x, mean, stddev)
-double x, mean, stddev;
+double gauss(double x, double mean, double stddev)
 {
 #define two_pi 6.28318530
 
     double temp, value;
-#ifndef MAC
-    extern double exp(), pow(), sqrt();
-#endif
 
     temp = exp(-0.5 * pow((x - mean) / stddev, 2.));
     value = temp / (sqrt(two_pi) * stddev);

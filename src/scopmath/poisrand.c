@@ -1,4 +1,5 @@
 #include <../../nrnconf.h>
+#include <math.h>
 /******************************************************************************
  *
  * File: poisrand.c
@@ -32,12 +33,11 @@ static char RCSid[] =
 /*  Functions called: random					*/
 /*								*/
 /*--------------------------------------------------------------*/
-int poisrand(mean)
-double mean;
+int poisrand(double mean)
 {
     int n;
     double s, q;
-    extern double exp(), scop_random();
+    extern double scop_random();
 
     n = 0;
     s = exp(-mean);

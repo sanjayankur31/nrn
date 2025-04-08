@@ -63,13 +63,11 @@ static char RCSid[] =
 /*--------------------------------------------------------------*/
 #include "scoplib.h"
 
-int crank(n, y, fval, gval, dt, dx, t, bound, pwork)
-int n;
-double y[], fval[], gval[], dt, dx, t, *bound[], **pwork;
+int crank(int n, double y[], double fval[], double gval[], double dt, double dx, double t, double *bound[], double **pwork)
 {
-    extern int tridiag();
-    extern double *makevector();
-    int i, error, bounds();
+    extern int tridiag(int , double *, double *, double *, double *, double []);
+    extern double *makevector(int);
+    int i, error, bounds(int , double *, double *, double *, double *, double [], double [], double , double , double *[]);
     double temp, r;
     double *main_diag, *sub_diag, *sup_diag, *const_vec;
 

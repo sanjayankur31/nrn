@@ -46,14 +46,12 @@ static char RCSid[] = "sigmoid.c,v 1.2 1997/08/30 14:32:20 hines Exp" ;
 /*								*/
 /****************************************************************/
 
+#include <math.h>
+
 double 
-sigmoid(x, max, K, n)
-double x, max, K, n;
+sigmoid(double x, double max, double K, double n)
 {
     double value, temp;
-#ifndef MAC
-    extern double pow();
-#endif
 
     temp = pow(x, n);
     value = (max * temp) / (temp + pow(K, n));

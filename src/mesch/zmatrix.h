@@ -120,8 +120,8 @@ extern ZVEC	*zv_add(ZVEC *vec1,ZVEC *vec2,ZVEC *out);
 extern ZVEC	*zv_mltadd(ZVEC *v1,ZVEC *v2,complex scale,ZVEC *out);
 extern ZVEC	*zv_sub(ZVEC *vec1,ZVEC *vec2,ZVEC *out);
 #ifdef PROTOTYPES_IN_STRUCT
-extern ZVEC	*zv_map(complex (*f)(),ZVEC *x,ZVEC *out);
-extern ZVEC	*_zv_map(complex (*f)(),void *params,ZVEC *x,ZVEC *out);
+extern ZVEC	*zv_map(complex (*f)(complex),ZVEC *x,ZVEC *out);
+extern ZVEC	*_zv_map(complex (*f)(void*, complex),void *params,ZVEC *x,ZVEC *out);
 #else
 extern ZVEC	*zv_map(complex (*f)(complex),ZVEC *x,ZVEC *out);
 extern ZVEC	*_zv_map(complex (*f)(void *,complex),void *params,ZVEC *x,ZVEC *out);
@@ -130,8 +130,8 @@ extern ZVEC	*zv_lincomb(int n,ZVEC *v[],complex a[],ZVEC *out);
 extern ZVEC	*zv_linlist(ZVEC *out,ZVEC *v1,complex a1,...);
 extern ZVEC	*zv_star(ZVEC *x1, ZVEC *x2, ZVEC *out);
 extern ZVEC	*zv_slash(ZVEC *x1, ZVEC *x2, ZVEC *out);
-extern int	zm_free(ZMAT *mat);
-extern int	zv_free(ZVEC *vec);
+extern int	zm_free_v(ZMAT *mat), zm_free(void *);
+extern int	zv_free(void *), zv_free_v(ZVEC *vec);
 
 extern ZVEC	*zv_rand(ZVEC *x);
 extern ZMAT	*zm_rand(ZMAT *A);
@@ -225,8 +225,8 @@ extern ZVEC	*zget_col();
 extern ZMAT	*zset_row();
 extern ZMAT	*zset_col();
 
-extern int	zm_free();
-extern int	zv_free();
+extern int	zm_free(void *), zm_free_v(ZMAT *);
+extern int	zv_free(void *), zv_free_v(ZVEC *);
 extern void	__zconj__();
 extern complex	__zip__();
 extern void	__zmltadd__();

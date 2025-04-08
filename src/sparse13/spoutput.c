@@ -140,14 +140,11 @@ static char RCSid[] =
  *      The largest expected external row or column number.
  */
 
-void
-spPrint( eMatrix, PrintReordered, Data, Header )
-
-char *eMatrix;
-int  PrintReordered, Data, Header;
+void 
+spPrint (char *eMatrix, int PrintReordered, int Data, int Header)
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
-register  int  J = 0;
+ int  J = 0;
 int I, Row, Col, Size, Top, StartCol = 1, StopCol, Columns, ElementCount = 0;
 double  Magnitude, SmallestDiag, SmallestElement;
 double  LargestElement = 0.0, LargestDiag = 0.0;
@@ -407,17 +404,14 @@ int  *PrintOrdToIntRowMap, *PrintOrdToIntColMap;
  *      The size of the matrix.
  */
 
-int
-spFileMatrix( eMatrix, File, Label, Reordered, Data, Header )
-
-char *eMatrix, *Label, *File;
-int Reordered, Data, Header;
+int 
+spFileMatrix (char *eMatrix, char *File, char *Label, int Reordered, int Data, int Header)
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
-register  int  I, Size;
-register  ElementPtr  pElement;
+ int  I, Size;
+ ElementPtr  pElement;
 int  Row, Col, Err=0;
-FILE  *pMatrixFile, *fopen();
+FILE  *pMatrixFile;
 
 /* Begin `spFileMatrix'. */
     ASSERT( IS_SPARSE( Matrix ) );
@@ -562,16 +556,17 @@ FILE  *pMatrixFile, *fopen();
  *      without a trace.
  */
 
+#if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
 int
-spFileVector( eMatrix, File, RHS IMAG_RHS )
-
-char *eMatrix, *File;
-RealVector  RHS IMAG_RHS;
+spFileVector(char *eMatrix, char *File, RealVector RHS, RealVector iRHS )
+#else
+int
+spFileVector(char *eMatrix, char *File, RealVector RHS)
+#endif
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
-register  int  I, Size, Err;
+ int  I, Size, Err;
 FILE  *pMatrixFile;
-FILE  *fopen();
 
 /* Begin `spFileVector'. */
     ASSERT( IS_SPARSE( Matrix ) AND RHS != NULL)
@@ -683,17 +678,15 @@ FILE  *fopen();
  *      The smallest element in the matrix excluding zero elements.
  */
 
-int
-spFileStats( eMatrix, File, Label )
-
-char *eMatrix, *File, *Label;
+int 
+spFileStats (char *eMatrix, char *File, char *Label)
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
-register  int  Size, I;
-register  ElementPtr  pElement;
+ int  Size, I;
+ ElementPtr  pElement;
 int NumberOfElements;
 RealNumber  Data, LargestElement, SmallestElement;
-FILE  *pStatsFile, *fopen();
+FILE  *pStatsFile;
 
 /* Begin `spFileStats'. */
     ASSERT( IS_SPARSE( Matrix ) );

@@ -51,9 +51,8 @@ u_int	i0, flag;
 }
 
 /* zv_mlt -- scalar-vector multiply -- may be in-situ */
-ZVEC	*zv_mlt(scalar,vector,out)
-complex	scalar;
-ZVEC	*vector,*out;
+ZVEC *
+zv_mlt (complex scalar, ZVEC *vector, ZVEC *out)
 {
 	/* u_int	dim, i; */
 	/* complex	*out_ve, *vec_ve; */
@@ -73,8 +72,8 @@ ZVEC	*vector,*out;
 }
 
 /* zv_add -- vector addition -- may be in-situ */
-ZVEC	*zv_add(vec1,vec2,out)
-ZVEC	*vec1,*vec2,*out;
+ZVEC *
+zv_add (ZVEC *vec1, ZVEC *vec2, ZVEC *out)
 {
 	u_int	dim;
 
@@ -92,9 +91,8 @@ ZVEC	*vec1,*vec2,*out;
 
 /* zv_mltadd -- scalar/vector multiplication and addition
 		-- out = v1 + scale.v2		*/
-ZVEC	*zv_mltadd(v1,v2,scale,out)
-ZVEC	*v1,*v2,*out;
-complex	scale;
+ZVEC *
+zv_mltadd (ZVEC *v1, ZVEC *v2, complex scale, ZVEC *out)
 {
 	/* register u_int	dim, i; */
 	/* complex	*out_ve, *v1_ve, *v2_ve; */
@@ -125,8 +123,8 @@ complex	scale;
 }
 
 /* zv_sub -- vector subtraction -- may be in-situ */
-ZVEC	*zv_sub(vec1,vec2,out)
-ZVEC	*vec1,*vec2,*out;
+ZVEC *
+zv_sub (ZVEC *vec1, ZVEC *vec2, ZVEC *out)
 {
 	/* u_int	i, dim; */
 	/* complex	*out_ve, *vec1_ve, *vec2_ve; */
@@ -145,13 +143,8 @@ ZVEC	*vec1,*vec2,*out;
 
 /* zv_map -- maps function f over components of x: out[i] = f(x[i])
 	-- _zv_map sets out[i] = f(x[i],params) */
-ZVEC	*zv_map(f,x,out)
-#ifdef PROTOYPES_IN_STRUCT
-complex	(*f)(complex);
-#else
-complex (*f)();
-#endif
-ZVEC	*x, *out;
+ZVEC *
+zv_map (complex (*f)(complex), ZVEC *x, ZVEC *out)
 {
 	complex	*x_ve, *out_ve;
 	int	i, dim;
@@ -168,14 +161,8 @@ ZVEC	*x, *out;
 	return out;
 }
 
-ZVEC	*_zv_map(f,params,x,out)
-#ifdef PROTOTYPES_IN_STRUCT
-complex	(*f)(void *,complex);
-#else
-complex	(*f)();
-#endif
-ZVEC	*x, *out;
-void	*params;
+ZVEC *
+_zv_map (complex (*f)(void *, complex), void *params, ZVEC *x, ZVEC *out)
 {
 	complex	*x_ve, *out_ve;
 	int	i, dim;
@@ -193,10 +180,13 @@ void	*params;
 }
 
 /* zv_lincomb -- returns sum_i a[i].v[i], a[i] real, v[i] vectors */
-ZVEC	*zv_lincomb(n,v,a,out)
-int	n;	/* number of a's and v's */
-complex	a[];
-ZVEC	*v[], *out;
+ZVEC *
+zv_lincomb (
+    int n,	/* number of a's and v's */
+    ZVEC *v[],
+    complex a[],
+    ZVEC *out
+)
 {
 	int	i;
 
@@ -316,8 +306,8 @@ ZVEC  *zv_linlist(va_alist) va_dcl
 
 /* zv_star -- computes componentwise (Hadamard) product of x1 and x2
 	-- result out is returned */
-ZVEC	*zv_star(x1, x2, out)
-ZVEC	*x1, *x2, *out;
+ZVEC *
+zv_star (ZVEC *x1, ZVEC *x2, ZVEC *out)
 {
     int		i;
     Real	t_re, t_im;
@@ -344,8 +334,8 @@ ZVEC	*x1, *x2, *out;
 	-- out[i] = x2[i] / x1[i]
 	-- if x1[i] == 0 for some i, then raise E_SING error
 	-- result out is returned */
-ZVEC	*zv_slash(x1, x2, out)
-ZVEC	*x1, *x2, *out;
+ZVEC *
+zv_slash (ZVEC *x1, ZVEC *x2, ZVEC *out)
 {
     int		i;
     Real	r2, t_re, t_im;
@@ -374,8 +364,8 @@ ZVEC	*x1, *x2, *out;
 }
 
 /* zv_sum -- returns sum of entries of a vector */
-complex	zv_sum(x)
-ZVEC	*x;
+complex 
+zv_sum (ZVEC *x)
 {
     int		i;
     complex	sum;
@@ -499,8 +489,8 @@ ZVEC	*x, *out;
 }
 
 /* zv_rand -- randomise a complex vector; uniform in [0,1)+[0,1)*i */
-ZVEC	*zv_rand(x)
-ZVEC	*x;
+ZVEC *
+zv_rand (ZVEC *x)
 {
     if ( ! x )
 	error(E_NULL,"zv_rand");

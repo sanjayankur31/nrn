@@ -299,9 +299,8 @@ VEC	*b, *x;
 	-- setting alpha = 0 gives incomplete LU factorisation
 	-- no fill-in is generated
 	-- in situ factorisation */
-SPMAT	*spILUfactor(A,alpha)
-SPMAT	*A;
-double	alpha;
+SPMAT *
+spILUfactor (SPMAT *A, double alpha)
 {
     int		i, k, idx, idx_piv, m, n, old_idx, old_idx_piv;
     SPROW	*r, *r_piv;

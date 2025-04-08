@@ -341,7 +341,7 @@ void parout() {
 	/*SUPPRESS 763*/\n\
 	/*SUPPRESS 765*/\n\
 	");
-    Lappendstr(defs_list, "extern double *getarg();\n");
+    Lappendstr(defs_list, "extern double *getarg(int);\n");
 #if VECTORIZE
     if (vectorize) {
         Sprintf(buf, "/* Thread safe. No static _p or _ppvar. */\n");
@@ -2814,7 +2814,7 @@ void net_receive(Item* qarg, Item* qp1, Item* qp2, Item* qstmt, Item* qend) {
             insertstr(qstmt, " assert(_tsav <= t); _tsav = t;");
         } else {
             insertstr(qstmt,
-                      " if (_tsav > t){ extern char* hoc_object_name(); "
+                      " if (_tsav > t){ extern char* hoc_object_name(Object *); "
                       "hoc_execerror(hoc_object_name(_pnt->ob), \":Event arrived out of order. "
                       "Must call ParallelContext.set_maxstep AFTER assigning minimum "
                       "NetCon.delay\");}\n _tsav = t;");

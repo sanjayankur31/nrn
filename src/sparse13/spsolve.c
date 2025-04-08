@@ -64,8 +64,15 @@ static char RCSid[] =
 #include "spdefs.h"
 
 /* avoid "declared implicitly `extern' and later `static' " warnings. */
-static void SolveComplexMatrix();
-static void SolveComplexTransposedMatrix();
+
+#if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
+static void SolveComplexTransposedMatrix(MatrixPtr, RealVector, RealVector, RealVector, RealVector);
+static void SolveComplexMatrix(MatrixPtr, RealVector, RealVector, RealVector, RealVector);
+#else
+static void SolveComplexTransposedMatrix(MatrixPtr, RealVector, RealVector);
+static void SolveComplexMatrix(MatrixPtr, RealVector, RealVector);
+#endif
+
 
 
 
@@ -131,17 +138,18 @@ static void SolveComplexTransposedMatrix();
 
 /*VARARGS3*/
 
-void
-spSolve( eMatrix, RHS, Solution IMAG_VECTORS )
+#if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
+void spSolve(char *eMatrix, RealVector RHS, RealVector Solution, RealVector iRHS, RealVector iSolution)
+#else
+void spSolve(char *eMatrix, RealVector RHS, RealVector Solution )
+#endif
 
-char *eMatrix;
-RealVector  RHS, Solution IMAG_VECTORS;
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
-register  ElementPtr  pElement;
-register  RealVector  Intermediate;
-register  RealNumber  Temp;
-register  int  I, *pExtOrder, Size;
+ ElementPtr  pElement;
+ RealVector  Intermediate;
+ RealNumber  Temp;
+ int  I, *pExtOrder, Size;
 ElementPtr  pPivot;
 
 /* Begin `spSolve'. */
@@ -277,17 +285,17 @@ ElementPtr  pPivot;
  *      without a trace.
  */
 
-static void
-SolveComplexMatrix( Matrix, RHS, Solution IMAG_VECTORS )
-
-MatrixPtr  Matrix;
-RealVector  RHS, Solution IMAG_VECTORS;
+#if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
+static void SolveComplexMatrix(MatrixPtr Matrix, RealVector RHS, RealVector Solution, RealVector iRHS, RealVector iSolution)
+#else
+static void SolveComplexMatrix(MatrixPtr Matrix, RealVector RHS, RealVector Solution)
+#endif
 {
-register  ElementPtr  pElement;
-register  ComplexVector  Intermediate;
-register  int  I, *pExtOrder, Size;
+ ElementPtr  pElement;
+ ComplexVector  Intermediate;
+ int  I, *pExtOrder, Size;
 ElementPtr  pPivot;
-register ComplexVector  ExtVector;
+ComplexVector  ExtVector;
 ComplexNumber  Temp;
 
 /* Begin `SolveComplexMatrix'. */
@@ -448,16 +456,18 @@ ComplexNumber  Temp;
 
 /*VARARGS3*/
 
+#if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
 void
-spSolveTransposed( eMatrix, RHS, Solution IMAG_VECTORS )
-
-char *eMatrix;
-RealVector  RHS, Solution IMAG_VECTORS;
+spSolveTransposed(char* eMatrix, RealVector RHS, RealVector Solution, RealVector iRHS, RealVector iSolution )
+#else
+void
+spSolveTransposed(char* eMatrix, RealVector RHS, RealVector Solution)
+#endif
 {
 MatrixPtr  Matrix = (MatrixPtr)eMatrix;
-register  ElementPtr  pElement;
-register  RealVector  Intermediate;
-register  int  I, *pExtOrder, Size;
+ ElementPtr  pElement;
+ RealVector  Intermediate;
+ int  I, *pExtOrder, Size;
 ElementPtr  pPivot;
 RealNumber  Temp;
 
@@ -596,16 +606,16 @@ RealNumber  Temp;
  *      without a trace.
  */
 
-static void
-SolveComplexTransposedMatrix(Matrix, RHS, Solution IMAG_VECTORS )
-
-MatrixPtr  Matrix;
-RealVector  RHS, Solution IMAG_VECTORS;
+#if spCOMPLEX AND spSEPARATED_COMPLEX_VECTORS
+static void SolveComplexTransposedMatrix(MatrixPtr Matrix, RealVector RHS, RealVector Solution, RealVector iRHS, RealVector iSolution)
+#else
+static void SolveComplexTransposedMatrix(MatrixPtr Matrix, RealVector RHS, RealVector Solution)
+#endif
 {
-register  ElementPtr  pElement;
-register  ComplexVector  Intermediate;
-register  int  I, *pExtOrder, Size;
-register  ComplexVector  ExtVector;
+ ElementPtr  pElement;
+ ComplexVector  Intermediate;
+ int  I, *pExtOrder, Size;
+ ComplexVector  ExtVector;
 ElementPtr  pPivot;
 ComplexNumber  Temp;
 

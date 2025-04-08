@@ -46,14 +46,13 @@ static char RCSid[] =
 #define CONTINUE 0
 
 double
-romberg(a, b, func)
-double a, b, (*func) ();
+romberg(double a, double b, double (*func) (double))
 {
 
     int i, nhalve, nsteps, status = CONTINUE;
     double h, FA, store1, store2, *T, integral;
-	extern double *makevector();
-    extern int freevector(), abort_run();
+	extern double *makevector(int);
+    extern int freevector(double *), abort_run(int);
 
     /* Allocate storage for Romberg tableau */
 

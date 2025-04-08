@@ -237,7 +237,6 @@ if(NOT EXISTS "${CODING_CONV_CMAKE}/3rdparty.cmake")
   nrn_initialize_submodule(external/coding-conventions)
 endif()
 include("${CODING_CONV_CMAKE}/3rdparty.cmake")
-cpp_cc_git_submodule(Random123)
 
 # =============================================================================
 # Enable sanitizer support if the NRN_SANITIZERS variable is set
@@ -737,55 +736,34 @@ add_dependencies(nrniv_lib hh_update)
 # Generate help_data.dat
 # =============================================================================
 if(NRN_ENABLE_PYTHON)
-  add_custom_target(
-    help_data_dat
-    COMMAND
-      ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/docs/parse_rst.py ${PROJECT_SOURCE_DIR}/docs/python
-      ${PROJECT_SOURCE_DIR}/share/lib/python/neuron/help_data.dat
-    COMMAND
-      ${CMAKE_COMMAND} -E copy_if_different
-      ${PROJECT_SOURCE_DIR}/share/lib/python/neuron/help_data.dat
-      ${PROJECT_BINARY_DIR}/lib/python/neuron/help_data.dat
-    COMMENT "Generating help_data.dat"
-    VERBATIM)
-  add_dependencies(nrniv_lib help_data_dat)
+    add_custom_target(
+        help_data_dat
+        COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/docs/parse_rst.py
+                ${PROJECT_SOURCE_DIR}/docs/python
+                ${PROJECT_SOURCE_DIR}/share/lib/python/neuron/help_data.dat
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${PROJECT_SOURCE_DIR}/share/lib/python/neuron/help_data.dat
+                ${PROJECT_SOURCE_DIR}/nrnpython/help_data.dat
+        COMMENT "Generating help_data.dat"
+        VERBATIM)
+    add_dependencies(nrniv_lib help_data_dat)
 endif()
 
 # =============================================================================
 # Add tests if enabled
 # =============================================================================
 if(NRN_ENABLE_TESTS)
-  # If CoreNEURON + NMODL are enabled, Catch2 will already have been set up...
-  if(NOT TARGET Catch2::Catch2)
-    nrn_add_external_project(catch2)
-    set(CATCH_DIR ${PROJECT_SOURCE_DIR}/external/catch2)
-    list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/external/catch2/contrib)
-    include(Catch)
-  endif()
-  include(CTest)
-  nrn_find_python_module(pytest)
-  nrn_find_python_module(pytest_cov)
-  if(NRN_ENABLE_PYTHON)
-    if(NOT PYTEST_FOUND)
-      message(SEND_ERROR "pytest Python package is required.")
-    elseif(NOT PYTEST_COV_FOUND)
-      message(WARNING "pytest-cov package not installed. Python coverage will not be generated.")
-    endif()
-  else() # share/demo still required for testing
-    add_custom_target(
-      copy_demo_to_build
-      COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/share/demo
-              ${NRN_BUILD_SHARE_DIR}/demo
-      COMMENT "Copying ${PROJECT_SOURCE_DIR}/share/demo to ${NRN_BUILD_SHARE_DIR}"
-      VERBATIM)
-    add_dependencies(nrniv_lib copy_demo_to_build)
+    include(CTest)
+    find_package(Catch2 REQUIRED)
+    find_python_module(pytest)
+  if(NRN_ENABLE_PYTHON AND NOT PYTEST_FOUND)
+    message(SEND_ERROR "pytest Python package is required.")
   endif()
   # Initialize the submodule *before* including the test/CMakeLists.txt that uses it. This ensures
   # that the test infrastructure can find the names of the input data files and set up rules to copy
   # them into the test working directories.
   set(backup "${${CODING_CONV_PREFIX}_3RDPARTY_DIR}")
   set(${CODING_CONV_PREFIX}_3RDPARTY_DIR "test")
-  cpp_cc_git_submodule(rxd/testdata)
   set(${CODING_CONV_PREFIX}_3RDPARTY_DIR "${backup}")
   add_subdirectory(test)
 endif()
@@ -836,15 +814,9 @@ if(MINGW)
   install(PROGRAMS ${BASH_EXE} DESTINATION ${CMAKE_INSTALL_PREFIX}/mingw/usr/bin)
 endif()
 
-# =============================================================================
-# Installation steps for backward compatibility
-# =============================================================================
-if(NOT NRN_WINDOWS_BUILD)
-  # create arch folder under prefix with symlink to bin and lib
-  nrn_install_dir_symlink(${CMAKE_INSTALL_PREFIX}/bin
-                          ${CMAKE_INSTALL_PREFIX}/${CMAKE_HOST_SYSTEM_PROCESSOR}/bin)
-  nrn_install_dir_symlink(${CMAKE_INSTALL_PREFIX}/lib
-                          ${CMAKE_INSTALL_PREFIX}/${CMAKE_HOST_SYSTEM_PROCESSOR}/lib)
+# set up libdir
+if(NOT DEFINED LIB_INSTALL_DIR)
+    set(LIB_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
 
 # =============================================================================

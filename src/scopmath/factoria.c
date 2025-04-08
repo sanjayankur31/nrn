@@ -39,18 +39,14 @@ static char RCSid[] =
 /****************************************************************/
 
 #include "errcodes.h"
+#include <math.h>
 
-double 
-factorial(n)
-double n;
+double factorial(double n)
 {
 #define two_pi 6.28318530
 
     int i;
     double x, value;
-#ifndef MAC
-    extern double exp(), pow(), sqrt();
-#endif
 
     x = (int) (n + 0.1);
     if (x < 0)

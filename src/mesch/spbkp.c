@@ -54,9 +54,8 @@ static	char	rcsid[] = "spbkp.c,v 1.1 1997/12/04 17:55:50 hines Exp";
 /* unord_get_idx -- returns index (encoded if entry not allocated)
 	of the element of row r with column j
 	-- uses linear search */
-int	unord_get_idx(r,j)
-SPROW	*r;
-int	j;
+int 
+unord_get_idx (SPROW *r, int j)
 {
     int		idx;
     row_elt	*e;
@@ -74,9 +73,8 @@ int	j;
 
 /* unord_get_val -- returns value of the (i,j) entry of A
 	-- same assumptions as unord_get_idx() */
-double	unord_get_val(A,i,j)
-SPMAT	*A;
-int	i, j;
+double 
+unord_get_val (SPMAT *A, int i, int j)
 {
     SPROW	*r;
     int		idx;
@@ -97,9 +95,8 @@ int	i, j;
 	    
 /* bkp_swap_elt -- swaps the (i,j) with the (k,l) entry of sparse matrix
 	-- either or both of the entries may be unallocated */
-static SPMAT	*bkp_swap_elt(A,i1,j1,idx1,i2,j2,idx2)
-SPMAT	*A;
-int	i1, j1, idx1, i2, j2, idx2;
+static SPMAT *
+bkp_swap_elt (SPMAT *A, int i1, int j1, int idx1, int i2, int j2, int idx2)
 {
     int		tmp_row, tmp_idx;
     SPROW	*r1, *r2;
@@ -200,9 +197,8 @@ int	i1, j1, idx1, i2, j2, idx2;
 }
 
 /* bkp_bump_col -- bumps row and idx to next entry in column j */
-row_elt	*bkp_bump_col(A, j, row, idx)
-SPMAT	*A;
-int	j, *row, *idx;
+row_elt *
+bkp_bump_col (SPMAT *A, int j, int *row, int *idx)
 {
     SPROW	*r;
     row_elt	*e;
@@ -229,9 +225,8 @@ int	j, *row, *idx;
 
 /* bkp_interchange -- swap rows/cols i and j (symmetric pivot)
 	-- uses just the upper triangular part */
-SPMAT	*bkp_interchange(A, i1, i2)
-SPMAT	*A;
-int	i1, i2;
+SPMAT *
+bkp_interchange (SPMAT *A, int i1, int i2)
 {
     int		tmp_row, tmp_idx;
     int		row1, row2, idx1, idx2, tmp_row1, tmp_idx1, tmp_row2, tmp_idx2;
@@ -441,9 +436,8 @@ int	*index;
 
 /* max_row_col -- returns max { |A[j][k]| : k >= i, k != j, k != l } given j
 	using symmetry and only the upper triangular part of A */
-static double max_row_col(A,i,j,l)
-SPMAT	*A;
-int	i, j, l;
+static double 
+max_row_col (SPMAT *A, int i, int j, int l)
 {
     int		row_num, idx;
     SPROW	*r;
@@ -493,8 +487,8 @@ int	i, j, l;
 }
 
 /* nonzeros -- counts non-zeros in A */
-static int	nonzeros(A)
-SPMAT	*A;
+static int 
+nonzeros (SPMAT *A)
 {
     int		cnt, i;
 
@@ -509,8 +503,8 @@ SPMAT	*A;
 
 /* chk_col_access -- for spBKPfactor()
 	-- checks that column access path is OK */
-int	chk_col_access(A)
-SPMAT	*A;
+int 
+chk_col_access (SPMAT *A)
 {
     int		cnt_nz, j, row, idx;
     SPROW	*r;
@@ -548,8 +542,8 @@ SPMAT	*A;
 }
 
 /* col_cmp -- compare two columns -- for sorting rows using qsort() */
-static int	col_cmp(e1,e2)
-row_elt	*e1, *e2;
+static int 
+col_cmp (row_elt *e1, row_elt *e2)
 {
     return e1->col - e2->col;
 }
@@ -1242,7 +1236,7 @@ double	tol;
 
     /* now sort the rows arrays */
     for ( i = 0; i < A->m; i++ )
-	qsort(A->row[i].elt,A->row[i].len,sizeof(row_elt),(int(*)())col_cmp);
+	qsort(A->row[i].elt,A->row[i].len,sizeof(row_elt),(int(*)(const void *, const void *))col_cmp);
     A->flag_col = A->flag_diag = FALSE;
 
     return A;

@@ -57,14 +57,11 @@ static char RCSid[] =
 #include <math.h>
 #include "errcodes.h"
 
-int newton(n, index, x, pfunc, value)
-int n, (*pfunc) ();
-double x[], value[];
-int *index;
+int newton(int n, int *index, double x[], int (*pfunc)(), double value[])
 {
-    extern int freevector(), freematrix(), crout(), solve();
-    extern double *makevector(), **makematrix();
-    int i, count = 0, error, buildjacobian(), *perm;
+    extern int freevector(double *), freematrix(double **), crout(int, double **, int *), solve(int, double**, double [], int *, double *, int *);
+    extern double *makevector(int), **makematrix(int, int);
+    int i, count = 0, error, buildjacobian(int , int *, double [], int (*)(), double [], double *[]), *perm;
     double **jacobian, *delta_x, change = 1.0, max_dev, temp;
 
     /*
@@ -184,13 +181,10 @@ int *index;
 
 #define max(x, y) (fabs(x) > y ? x : y)
 
-int buildjacobian(n, index, x, pfunc, value, jacobian)
-int n, (*pfunc) ();
-double x[], value[], *jacobian[];
-int *index;
+int buildjacobian(int n, int *index, double x[], int (*pfunc)(), double value[], double *jacobian[])
 {
-    extern int freevector();
-    extern double *makevector();
+    extern int freevector(double *);
+    extern double *makevector(int);
     int i, j;
     double increment, *high_value, *low_value;
 
@@ -253,13 +247,10 @@ int *index;
     return 0;
 }
 
-int build_traj_jacob(n, index, x, pfunc, value, jacobian)
-int n, (*pfunc) ();
-double x[], *jacobian[];
-int *index, *value;
+int build_traj_jacob(int n, int *index, double x[], int (*pfunc) (), int *value, double *jacobian[])
 {
-    extern int freevector();
-    extern double *makevector();
+    extern int freevector(double *);
+    extern double *makevector(int);
     int i, j;
     double increment, *high_value, *low_value;
 

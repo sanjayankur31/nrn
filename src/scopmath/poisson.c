@@ -1,4 +1,5 @@
 #include <../../nrnconf.h>
+#include <math.h>
 /******************************************************************************
  *
  * File: poisson.c
@@ -35,15 +36,10 @@ static char RCSid[] =
 /*								*/
 /*--------------------------------------------------------------*/
 
-double poisson(x, mean)
-double x;
-double mean;
+double poisson(double x, double mean)
 {
     double value;
-#ifndef MAC
-    extern double exp(), pow();
-#endif
-	extern double factorial();
+	extern double factorial(double);
 
     value = (pow(mean, x) * exp(-mean)) / factorial(x);
     return (value);

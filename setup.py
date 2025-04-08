@@ -410,7 +410,7 @@ def setup_package():
     NRN_COLLECT_DIRS = ["bin", "lib", "include", "share"]
 
     docs_require = []  # sphinx, themes, etc
-    maybe_rxd_reqs = ["numpy<2", "Cython<3"] if Components.RX3D else []
+    maybe_rxd_reqs = ["numpy", "Cython"] if Components.RX3D else []
     maybe_docs = docs_require if "docs" in sys.argv else []
     maybe_test_runner = ["pytest-runner"] if "test" in sys.argv else []
 
@@ -484,12 +484,7 @@ def setup_package():
                 "src/nrnmpi",
             ],
             extra_compile_args=extra_compile_args + ["-std=c++17"],
-            extra_link_args=extra_link_args
-            + [
-                "-Wl,-rpath,{}{}".format(
-                    REL_RPATH, "/../../" if just_extensions else "/.data/lib/"
-                )
-            ],
+            extra_link_args=extra_link_args,
             **extension_common_params,
         )
     ]
@@ -515,10 +510,8 @@ def setup_package():
             dict(
                 # Cython files take a long time to compile with O2 but this
                 # is a distribution...
-                extra_compile_args=extra_compile_args
-                + ["-O2" if "NRN_BUILD_FOR_UPLOAD" in os.environ else rx3d_opt_level],
-                extra_link_args=extra_link_args
-                + ["-Wl,-rpath,{}".format(REL_RPATH + "/../../.data/lib/")],
+                extra_compile_args=extra_compile_args,
+                extra_link_args=extra_link_args,
             )
         )
 
@@ -567,14 +560,10 @@ def setup_package():
         packages=py_packages,
         package_data={"neuron": ["*.dat"]},
         ext_modules=extensions,
-        scripts=[
-            os.path.join(NRN_PY_SCRIPTS, f)
-            for f in os.listdir(NRN_PY_SCRIPTS)
-            if f[0] != "_"
-        ],
+        scripts=[],
         cmdclass=dict(build_ext=CMakeAugmentedBuilder, docs=Docs),
         install_requires=[
-            "numpy>=1.9.3,<2",
+            "numpy>=1.9.3",
             "packaging",
             "find_libpython",
             "setuptools",

@@ -169,8 +169,8 @@ ZVEC	*b,*x;
 
 /* zm_inverse -- returns inverse of A, provided A is not too rank deficient
 	-- uses LU factorisation */
-ZMAT	*zm_inverse(A,out)
-ZMAT	*A, *out;
+ZMAT *
+zm_inverse (ZMAT *A, ZMAT *out)
 {
 	int	i;
 	ZVEC	*tmp, *tmp2;

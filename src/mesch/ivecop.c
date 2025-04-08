@@ -37,8 +37,8 @@ static char    line[MAXLINE];
 
 
 /* iv_get -- get integer vector -- see also memory.c */
-IVEC	*iv_get(dim)
-int	dim;
+IVEC	*iv_get(
+int	dim)
 {
    IVEC	*iv;
    /* u_int	i; */
@@ -64,8 +64,11 @@ int	dim;
 }
 
 /* iv_free -- returns iv & asoociated memory back to memory heap */
-int	iv_free(iv)
-IVEC	*iv;
+int	iv_free(void *iv){
+    return iv_free_v((IVEC *) iv);
+}
+int	iv_free_v(
+IVEC	*iv)
 {
    if ( iv==IVNULL || iv->dim > MAXDIM )
      /* don't trust it */
@@ -93,9 +96,9 @@ IVEC	*iv;
 
 /* iv_resize -- returns the IVEC with dimension new_dim
    -- iv is set to the zero vector */
-IVEC	*iv_resize(iv,new_dim)
-IVEC	*iv;
-int	new_dim;
+IVEC	*iv_resize(
+IVEC	*iv,
+int	new_dim)
 {
    int	i;
    
@@ -129,8 +132,8 @@ int	new_dim;
 
 /* iv_copy -- copy integer vector in to out
    -- out created/resized if necessary */
-IVEC	*iv_copy(in,out)
-IVEC	*in, *out;
+IVEC	*iv_copy(
+IVEC	*in, IVEC *out)
 {
    int		i;
    
@@ -147,9 +150,9 @@ IVEC	*in, *out;
 	-- moves the length dim0 subvector with initial index i0
 	   to the corresponding subvector of out with initial index i1
 	-- out is resized if necessary */
-IVEC	*iv_move(in,i0,dim0,out,i1)
-IVEC	*in, *out;
-int	i0, dim0, i1;
+IVEC	*iv_move(
+IVEC	*in,
+int	i0, int dim0, IVEC *out, int i1)
 {
     if ( ! in )
 	error(E_NULL,"iv_move");
@@ -166,8 +169,8 @@ int	i0, dim0, i1;
 }
 
 /* iv_add -- integer vector addition -- may be in-situ */
-IVEC	*iv_add(iv1,iv2,out)
-IVEC	*iv1,*iv2,*out;
+IVEC	*iv_add(
+IVEC	*iv1, IVEC *iv2, IVEC *out)
 {
    u_int	i;
    int	*out_ive, *iv1_ive, *iv2_ive;
@@ -192,8 +195,8 @@ IVEC	*iv1,*iv2,*out;
 
 
 /* iv_sub -- integer vector addition -- may be in-situ */
-IVEC	*iv_sub(iv1,iv2,out)
-IVEC	*iv1,*iv2,*out;
+IVEC	*iv_sub(
+IVEC	*iv1, IVEC *iv2,IVEC *out)
 {
    u_int	i;
    int	*out_ive, *iv1_ive, *iv2_ive;
@@ -216,9 +219,9 @@ IVEC	*iv1,*iv2,*out;
 }
 
 /* iv_foutput -- print a representation of iv on stream fp */
-void	iv_foutput(fp,iv)
-FILE	*fp;
-IVEC	*iv;
+void	iv_foutput(
+FILE	*fp,
+IVEC	*iv)
 {
    int	i;
    
@@ -242,11 +245,11 @@ IVEC	*iv;
 
 
 /* iv_finput -- input integer vector from stream fp */
-IVEC	*iv_finput(fp,x)
-FILE	*fp;
-IVEC	*x;
+IVEC	*iv_finput(
+FILE	*fp,
+IVEC	*x)
 {
-   IVEC	*iiv_finput(),*biv_finput();
+   IVEC	*iiv_finput(FILE *, IVEC *),*biv_finput(FILE *, IVEC *);
    
    if ( isatty(fileno(fp)) )
      return iiv_finput(fp,x);
@@ -255,9 +258,9 @@ IVEC	*x;
 }
 
 /* iiv_finput -- interactive input of IVEC iv */
-IVEC	*iiv_finput(fp,iv)
-FILE	*fp;
-IVEC	*iv;
+IVEC	*iiv_finput(
+FILE	*fp,
+IVEC	*iv)
 {
    u_int	i,dim,dynamic;	/* dynamic set if memory allocated here */
    
@@ -296,9 +299,9 @@ IVEC	*iv;
 }
 
 /* biv_finput -- batch-file input of IVEC iv */
-IVEC	*biv_finput(fp,iv)
-FILE	*fp;
-IVEC	*iv;
+IVEC	*biv_finput(
+FILE	*fp,
+IVEC	*iv)
 {
    u_int	i,dim;
    int	io_code;
@@ -323,9 +326,9 @@ IVEC	*iv;
 }
 
 /* iv_dump -- dumps all the contents of IVEC iv onto stream fp */
-void	iv_dump(fp,iv)
-FILE*fp;
-IVEC*iv;
+void	iv_dump(
+FILE*fp,
+IVEC*iv)
 {
    int		i;
    
@@ -356,9 +359,9 @@ IVEC*iv;
    the permutation is order = [2, 0, 1].
    -- if order is NULL on entry then it is ignored
    -- the sorted vector x is returned */
-IVEC	*iv_sort(x, order)
-IVEC	*x;
-PERM	*order;
+IVEC	*iv_sort(
+IVEC	*x,
+PERM	*order)
 {
    int		*x_ive, tmp, v;
    /* int		*order_pe; */

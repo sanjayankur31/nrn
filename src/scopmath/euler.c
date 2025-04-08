@@ -61,13 +61,12 @@ static char RCSid[] =
 #include "errcodes.h"
 
 /* ARGSUSED */
-int euler(_ninits, neqn, var, der, p, t, dt, func, work)
-int _ninits;
-double p[], *t, dt, **work; int var[]; int der[];
-#define der_(arg)  p[der[arg]]
-#define var_(arg)  p[var[arg]]
-int neqn, (*func) ();
+int 
+euler (int _ninits, int neqn, int var[], int der[], double p[], double *t, double dt, int (*func)(double []), double **work)
 {
+
+    #define der_(arg)  p[der[arg]]
+    #define var_(arg)  p[var[arg]]
     int i;
 
     /* Calculate the derivatives */

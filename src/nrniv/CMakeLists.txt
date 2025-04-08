@@ -204,23 +204,7 @@ set(NRN_INCLUDE_DIRS
 # =============================================================================
 # Helper commands : generate various headers
 # =============================================================================
-# ~~~
-# generate version information file
-# nrnversion.h does not depend on another file but on the output of
-# git2version_h.sh and nrnversion.h should only be changed if that output
-# is different from the contents of nrnversion.h
-# ~~~
-add_custom_target(
-  nrnversion_h
-  COMMAND ${CMAKE_COMMAND} -E env PROJECT_VERSION=${PROJECT_VERSION} bash
-          ${PROJECT_SOURCE_DIR}/git2nrnversion_h.sh ${PROJECT_SOURCE_DIR} > nrnversion.h.tmp
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different nrnversion.h.tmp ${NRN_NRNOC_SRC_DIR}/nrnversion.h
-  DEPENDS ${PROJECT_SOURCE_DIR}/git2nrnversion_h.sh)
-
-add_custom_command(OUTPUT ${NRN_NRNOC_SRC_DIR}/nrnversion.h DEPENDS nrnversion_h)
-add_dependencies(generated_source_files nrnversion_h)
-
-# avoid error with nvector_serial.cpp for #include <../../../nrnconf.h>
+# avoid error with nvector_serial.c for #include <../../../nrnconf.h>
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/src/sundials/shared)
 
 # generate hocusr.h
@@ -363,6 +347,7 @@ else()
   elseif(TERMCAP_FOUND)
     target_link_libraries(nrniv_lib ${TERMCAP_LIBRARIES})
   endif()
+  set_target_properties(nrniv_lib PROPERTIES SOVERSION 0.0.0)
 endif()
 
 if(NRN_ENABLE_MUSIC)
@@ -406,7 +391,7 @@ if(NRN_ENABLE_MPI)
         target_link_libraries(${libname}_lib nrniv_lib)
       endif()
       set_property(TARGET ${libname}_lib PROPERTY OUTPUT_NAME ${libname})
-      install(TARGETS ${libname}_lib DESTINATION ${NRN_INSTALL_SHARE_LIB_DIR})
+      install(TARGETS ${libname}_lib DESTINATION ${LIB_INSTALL_DIR})
     endforeach(val)
   else()
     target_link_libraries(nrniv_lib ${MPI_C_LIBRARIES})
@@ -485,9 +470,9 @@ endif()
 # expected when ctypes looks for dlls
 # ~~~
 install(TARGETS nrniv nocmodl modlunit DESTINATION bin)
-install(TARGETS nrniv_lib DESTINATION ${NRN_INSTALL_SHARE_LIB_DIR})
-if(LIBIVX11DYNAM_NAME)
-  install(FILES ${PROJECT_BINARY_DIR}/lib/${LIBIVX11DYNAM_NAME} DESTINATION lib)
+install(TARGETS nrniv_lib DESTINATION ${LIB_INSTALL_DIR})
+if (LIBIVX11DYNAM_NAME)
+    install(FILES ${PROJECT_BINARY_DIR}/lib/${LIBIVX11DYNAM_NAME} DESTINATION ${LIB_INSTALL_DIR})
 endif()
 
 # =============================================================================

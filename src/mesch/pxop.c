@@ -226,8 +226,8 @@ u_int	i1,i2;		/* elements to transpose */
 
 /* myqsort -- a cheap implementation of Quicksort on integers
 		-- returns number of swaps */
-static int myqsort(a,num)
-int	*a, num;
+static int 
+myqsort (int *a, int num)
 {
 	int	i, j, tmp, v;
 	int	numswaps;
